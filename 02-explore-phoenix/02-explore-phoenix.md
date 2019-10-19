@@ -1,6 +1,6 @@
 # Phoenix 初体验
 
-在[前一章](01-create-project/01-create-project.md)，我们创建了 `Menu` 项目。现在，让我们进入项目的根目录，启动服务器：
+在[前一章](/01-create-project/01-create-project.md)，我们创建了 `Menu` 项目。现在，让我们进入项目的根目录，启动服务器：
 
 ```bash
 $ cd menu
@@ -115,9 +115,9 @@ $ git commit -m 'init`
 3. [视图](https://hexdocs.pm/phoenix/views.html)（view）- 决定渲染哪种模板
 4. [模板](https://hexdocs.pm/phoenix/templates.html)（template）- 决定要展示怎样的内容给用户
 
-下一章，我们将对 [Menu 项目做个规划](03-project-menu/03-project-menu.md)。
+下一章，我们将对 [Menu 项目做个规划](/03-project-menu/03-project-menu.md)。
 
 
-上一章：[创建项目](01-create-project/01-create-project.md)
-下一章：[Menu 项目规划](03-project-menu/03-project-menu.md)
+上一章：[创建项目](/01-create-project/01-create-project.md)
+下一章：[Menu 项目规划](/03-project-menu/03-project-menu.md)
 

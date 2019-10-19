@@ -300,9 +300,9 @@ Finished in 0.2 seconds
 ```
 我们的测试又快起来了。
 
-下一章里，我们将做一些[扫尾工作](04-user-register/09-optimize-ui.md)，然后结束用户注册模块。
+下一章里，我们将做一些[扫尾工作](/04-user-register/09-optimize-ui.md)，然后结束用户注册模块。
 
 
-上一章：[`password` 规则](04-user-register/07-password-rules.md)
-下一章：[优化用户注册界面](04-user-register/09-optimize-ui.md)
+上一章：[`password` 规则](/04-user-register/07-password-rules.md)
+下一章：[优化用户注册界面](/04-user-register/09-optimize-ui.md)
 

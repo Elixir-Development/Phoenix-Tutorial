@@ -56,9 +56,9 @@ index 7d7d59f..8c68e6d 100644
 
 你可能已经发现，我们有大量类似 `validate_length`、`validate_format` 的函数可以使用，我们要做的，只是定义我们的需求，然后找出相应的函数 - 非常轻松。
 
-下一章，我们将[禁止用户注册 `admin`](04-user-register/05-username-exclude.md) 等用户名。
+下一章，我们将[禁止用户注册 `admin`](/04-user-register/05-username-exclude.md) 等用户名。
 
 
-上一章：[检查用户名的许可字符](04-user-register/03-username-format.md)
-下一章：[禁止用户注册 `admin`](04-user-register/05-username-exclude.md)
+上一章：[检查用户名的许可字符](/04-user-register/03-username-format.md)
+下一章：[禁止用户注册 `admin`](/04-user-register/05-username-exclude.md)
 

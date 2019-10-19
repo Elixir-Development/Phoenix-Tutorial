@@ -1,6 +1,6 @@
 # username 已被人占用
 
-如果你已完成[上一章](04-user-register/01-username-required.md)，你可能已经猜到，这章的规则要怎么写，不过在那之前，还是让我们先写个测试：
+如果你已完成[上一章](/04-user-register/01-username-required.md)，你可能已经猜到，这章的规则要怎么写，不过在那之前，还是让我们先写个测试：
 
 ```elixir
 diff --git a/test/models/user_test.exs b/test/models/user_test.exs
@@ -428,10 +428,10 @@ index 9451c2d..975c7b1 100644
 ```
 再次运行测试，悉数通过。
 
-下一章，我们将[检查用户名的许可字符](04-user-register/03-username-format.md)。
+下一章，我们将[检查用户名的许可字符](/04-user-register/03-username-format.md)。
 
 
-上一章：[username 必填](04-user-register/01-username-required.md)
-下一章：[检查用户名的许可字符](04-user-register/03-username-format.md)
+上一章：[username 必填](/04-user-register/01-username-required.md)
+下一章：[检查用户名的许可字符](/04-user-register/03-username-format.md)
 
 

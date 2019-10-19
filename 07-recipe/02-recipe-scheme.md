@@ -285,10 +285,10 @@ $ mix test
 Finished in 0.6 seconds
 56 tests, 2 failures
 ```
-`recipe_controller_test.exs` 文件中出现两个错误 - 不过我们留给[下一章](07-recipe1/03-recipe-controller.md)处理。
+`recipe_controller_test.exs` 文件中出现两个错误 - 不过我们留给[下一章](/07-recipe/03-recipe-controller.md)处理。
 
 
-上一章：[生成菜谱样板文件](07-recipe1/01-gen-html.md)
-下一章：[Recipe 控制器](07-recipe1/03-recipe-controller.md)
+上一章：[生成菜谱样板文件](/07-recipe/01-gen-html.md)
+下一章：[Recipe 控制器](/07-recipe/03-recipe-controller.md)
 
 

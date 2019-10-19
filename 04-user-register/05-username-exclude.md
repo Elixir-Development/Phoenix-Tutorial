@@ -41,9 +41,9 @@ index 8c68e6d..35e4d0b 100644
 
 再运行测试，悉数通过。
 
-这样，我们就完成了所有 `username` 有关的规则，下一章，我们开始编写 [`email` 相关的规则](04-user-register/06-email-rules.md)。
+这样，我们就完成了所有 `username` 有关的规则，下一章，我们开始编写 [`email` 相关的规则](/04-user-register/06-email-rules.md)。
 s
 
-上一章：[限制 `username` 的长度](04-user-register/04-username-length.md)
-下一章：[`email` 相关的规则](04-user-register/06-email-rules.md)
+上一章：[限制 `username` 的长度](/04-user-register/04-username-length.md)
+下一章：[`email` 相关的规则](/04-user-register/06-email-rules.md)
 

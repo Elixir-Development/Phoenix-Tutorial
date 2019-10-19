@@ -1,6 +1,6 @@
 # 优化用户注册界面
 
-截止上一章，我们基本完成用户注册的所有逻辑，但界面上还有些问题需要解决。
+截止[上一章](/04-user-register/08-password-storage.md)，我们基本完成用户注册的所有逻辑，但界面上还有些问题需要解决。
 
 1. 错误信息不明显
 
@@ -151,7 +151,7 @@ index 2e08483..95d3108 100644
 至此，我们完成所有用户注册相关的开发，下一章，开始进入[用户登录环节](05-session/01-login.md)。
 
 
-上一章：[安全存储密码](04-user-register/08-password-storage.md)
-下一章：[登陆](05-session/01-login.md)
+上一章：[安全存储密码](/04-user-register/08-password-storage.md)
+下一章：[登陆](/05-session/01-login.md)
 
 

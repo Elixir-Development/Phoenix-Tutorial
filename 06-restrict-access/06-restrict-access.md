@@ -671,6 +671,6 @@ Finished in 0.4 seconds
 全部通过。
 
 
-上一章：[登录/注册按钮](05-session/04-login-logout-buttons.md)
-下一章：[生成菜谱样板文件](07-recipe1/01-gen-html.md)
+上一章：[登录/注册按钮](/05-session/04-login-logout-buttons.md)
+下一章：[生成菜谱样板文件](/07-recipe/01-gen-html.md)
 

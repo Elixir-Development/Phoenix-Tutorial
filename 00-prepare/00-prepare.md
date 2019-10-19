@@ -71,8 +71,8 @@ Phoenix 默认使用 PostgreSQL 数据库，因此，也请[根据 PostgreSQL �
 
 如果你是 Linux 用户，你还需要安装 [inotify-tools](https://github.com/rvoicilas/inotify-tools/wiki)，Phoenix 实时刷新功能需要用到它。mac 或 windows 用户则不必关心。
 
-好了，一切准备就绪，接下来，我们将[创建一个 Phoenix 项目](01-create-project/01-create-project.md)。
+好了，一切准备就绪，接下来，我们将[创建一个 Phoenix 项目](/01-create-project/01-create-project.md)。
 
 
-下一章：[创建项目](01-create-project/01-create-project.md)
+下一章：[创建项目](/01-create-project/01-create-project.md)
 

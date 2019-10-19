@@ -106,6 +106,6 @@ Finished in 0.5 seconds
 新生成的测试目前悉数通过。
 
 
-上一章：[安全限制](06-restrict-access/06-restrict-access.md)
-下一章：[Recipe 属性开发](07-recipe1/02-recipe-scheme.md)
+上一章：[安全限制](/06-restrict-access/06-restrict-access.md)
+下一章：[Recipe 属性开发](/07-recipe/02-recipe-scheme.md)
 

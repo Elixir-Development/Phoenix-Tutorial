@@ -65,9 +65,9 @@ index 7d13c5f..8d8a6f5 100644
 ```
 运行 `mix test`，测试全部通过。
 
-下一章，我们开发[退出登录](05-session/03-logout.md)功能。
+下一章，我们开发[退出登录](/05-session/03-logout.md)功能。
 
 
-上一章：[登陆]](05-session/01-login.md)
-下一章：[退出登录](05-session/03-logout.md)
+上一章：[登陆](/05-session/01-login.md)
+下一章：[退出登录](/05-session/03-logout.md)
 

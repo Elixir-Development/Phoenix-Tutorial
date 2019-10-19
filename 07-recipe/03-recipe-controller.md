@@ -1,6 +1,6 @@
 # Recipe 控制器
 
-[上一章](07-recipe1/02-recipe-scheme.md)结尾，我们运行 `mix test` 检查出 `recipe_controller_test.exs` 文件中的两个错误。
+[上一章](/07-recipe/02-recipe-scheme.md)结尾，我们运行 `mix test` 检查出 `recipe_controller_test.exs` 文件中的两个错误。
 
 很显然，它们是因为 `@valid_attrs` 中缺少 `user_id` 导致的。
 
@@ -1029,9 +1029,9 @@ Finished in 0.7 seconds
 57 tests, 0 failures
 ```
 
-悉数通过。至此，我们完成了 `RecipeController` 的测试。[下一章](07-recipe1/04-recipe-view.md)，我们将接触 View 的测试。
+悉数通过。至此，我们完成了 `RecipeController` 的测试。[下一章](/07-recipe1/04-recipe-view.md)，我们将接触 View 的测试。
 
 
-上一章：[Recipe 属性开发](07-recipe1/02-recipe-scheme.md)
-下一章：[菜谱视图](07-recipe1/04-recipe-view.md)
+上一章：[Recipe 属性开发](/07-recipe/02-recipe-scheme.md)
+下一章：[菜谱视图](/07-recipe/04-recipe-view.md)
 

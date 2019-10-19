@@ -2,7 +2,7 @@
 
 这一次，我们没有 `mix phoenix.gen.html` 可以用，所以要一步一步写了。
 
-它的过程，跟[添加帮助文件一章](02-explore-phoenix/02-explore-phoenix.md)一样。
+它的过程，跟[添加帮助文件一章](/02-explore-phoenix/02-explore-phoenix.md)一样。
 
 但这里，我们要从测试写起，运行它，看着它抛出错误，之后才填补代码，保证每个测试通过。
 
@@ -832,9 +832,9 @@ Finished in 0.4 seconds
 
 你可能会问，为什么在登录时，不直接保存 `user` 数据到 session 中，而是保存了 `user.id` 的数据？假如我们保存了 `user` 数据，而用户又修改了个人信息，会导致 session 中的 `user` 数据与数据库中不一致，所以我们只存了 id，然后根据 id 从数据库中读取 `user` 数据，保证了数据的有效性。
 
-以上，我们完成用户登录的功能。[下一章，我们将自动登录注册成功的用户](05-session/02-auto-login-user.md)。
+以上，我们完成用户登录的功能。[下一章，我们将自动登录注册成功的用户](/05-session/02-auto-login-user.md)。
 
 
-上一章：[优化用户注册界面](04-user-register/09-optimize-ui.md)
-下一章：[注册成功自动登录](05-session/02-auto-login-user.md)
+上一章：[优化用户注册界面](/04-user-register/09-optimize-ui.md)
+下一章：[注册成功自动登录](/05-session/02-auto-login-user.md)
 

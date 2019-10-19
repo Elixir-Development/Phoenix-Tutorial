@@ -1,6 +1,6 @@
 # username 必填
 
-[上一章](04-user-register/00-prepare.md)里，我们用 `mix phoenix.gen.html` 命令创建出完整用户界面，并且具备增加、删除、更改、查询用户的功能。
+[上一章](/04-user-register/00-prepare.md)里，我们用 `mix phoenix.gen.html` 命令创建出完整用户界面，并且具备增加、删除、更改、查询用户的功能。
 
 这一章，我们将实现 `username` 的第一个规则：`username` 必填，如果未填写，提示用户`请填写`。
 
@@ -130,7 +130,7 @@ Finished in 0.07 seconds
 ```
 测试通过。现在我们可以放心地认为，用户提交空白 `username` 时，Phoenix 一定会返回“请填写”的错误消息。
 
-下一章，我们将[验证 username 的唯一性](04-user-register/02-username-unique.md)。
+下一章，我们将[验证 username 的唯一性](/04-user-register/02-username-unique.md)。
 
 ## 为什么要写测试？
 
@@ -145,6 +145,6 @@ Finished in 0.07 seconds
 而况在 Phoenix 框架下，测试非常容易写。
 
 
-上一章：[用户注册功能](04-user-register/00-prepare.md)
-下一章：[验证 username 的唯一性](04-user-register/02-username-unique.md)
+上一章：[用户注册功能](/04-user-register/00-prepare.md)
+下一章：[验证 username 的唯一性](/04-user-register/02-username-unique.md)
 

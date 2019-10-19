@@ -21,11 +21,11 @@
     2. 退出登录
 3. 待补充
 
-下一章，我们就开始开发[用户注册的功能](04-user-register/00-prepare.md)。
+下一章，我们就开始开发[用户注册的功能](/04-user-register/00-prepare.md)。
 
 但在项目开始前，请记得清理前面章节中添加的 `/help` 的代码。
 
 
-上一章：[Phoenix 初体验](02-explore-phoenix/02-explore-phoenix.md)
-下一章：[用户注册功能](04-user-register/00-prepare.md)
+上一章：[Phoenix 初体验](/02-explore-phoenix/02-explore-phoenix.md)
+下一章：[用户注册功能](/04-user-register/00-prepare.md)
 

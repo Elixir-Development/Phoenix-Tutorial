@@ -220,9 +220,9 @@ Finished in 0.2 seconds
 ```
 通过了。这样，我们就搞定了 `email` 所有规则。如果你心里不踏实，可以打开浏览器页面人肉测试一番 - 但建议你不要，要控制住这种无用的欲望。
 
-下一章，我们开始编写 [`password` 规则](04-user-register/07-password-rules.md)。
+下一章，我们开始编写 [`password` 规则](/04-user-register/07-password-rules.md)。
 
 
-上一章：[禁止用户注册 `admin`](04-user-register/05-username-exclude.md)
-下一章：[`password` 规则](04-user-register/07-password-rules.md)
+上一章：[禁止用户注册 `admin`](/04-user-register/05-username-exclude.md)
+下一章：[`password` 规则](/04-user-register/07-password-rules.md)
 

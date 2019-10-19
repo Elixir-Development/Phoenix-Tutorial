@@ -253,5 +253,5 @@ Finished in 0.9 seconds
 测试全部通过。
 
 
-上一章：[菜谱视图](07-recipe1/04-recipe-view.md)
+上一章：[菜谱视图](/07-recipe/04-recipe-view.md)
 

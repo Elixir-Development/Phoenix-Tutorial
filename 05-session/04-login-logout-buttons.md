@@ -131,9 +131,9 @@ index 8b9b38b..b9234b1 100644
          render(conn, "new.html", changeset: changeset)
 ```
 
-下一章，我们要对[用户相关页面做些限制](06-restrict-access/06-restrict-access.md)，以保证数据的安全。
+下一章，我们要对[用户相关页面做些限制](/06-restrict-access/06-restrict-access.md)，以保证数据的安全。
 
 
-上一章：[退出登录](05-session/03-logout.md)
-下一章：[安全限制](06-restrict-access/06-restrict-access.md)
+上一章：[退出登录](/05-session/03-logout.md)
+下一章：[安全限制](/06-restrict-access/06-restrict-access.md)
 

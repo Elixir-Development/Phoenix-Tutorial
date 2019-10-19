@@ -200,9 +200,9 @@ index 4c12197..292aeb8 100644
    # Other scopes may use custom stacks.
 ```
 
-下一章，我们给页面加上[登录/注册按钮](05-session/04-login-logout-buttons.md)，方便用户操作。
+下一章，我们给页面加上[登录/注册按钮](/05-session/04-login-logout-buttons.md)，方便用户操作。
 
 
-上一章：[注册成功自动登录](05-session/02-auto-login-user.md)
-下一章：[登录/注册按钮](05-session/04-login-logout-buttons.md)
+上一章：[注册成功自动登录](/05-session/02-auto-login-user.md)
+下一章：[登录/注册按钮](/05-session/04-login-logout-buttons.md)
 

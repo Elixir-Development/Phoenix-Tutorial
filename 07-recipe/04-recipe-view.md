@@ -194,6 +194,6 @@ Finished in 0.8 seconds
 ```
 
 
-上一章：[Recipe 控制器](07-recipe1/03-recipe-controller.md)
-下一章：[添加视频地址](07-recipe1/05-recipe-tv-url.md)
+上一章：[Recipe 控制器](/07-recipe/03-recipe-controller.md)
+下一章：[添加视频地址](/07-recipe/05-recipe-tv-url.md)
 

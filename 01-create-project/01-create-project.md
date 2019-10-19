@@ -61,7 +61,7 @@ The database for Menu.Repo has been created
 数据库已成功创建。
 
 
-上一章：[准备工作](00-prepare/00-prepare.md)
-下一章：[Phoenix 初体验](02-explore-phoenix/02-explore-phoenix.md)
+上一章：[准备工作](/00-prepare/00-prepare.md)
+下一章：[Phoenix 初体验](/02-explore-phoenix/02-explore-phoenix.md)
 
 

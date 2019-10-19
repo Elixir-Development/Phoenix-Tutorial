@@ -130,9 +130,9 @@ Generated tv_recipe app
 
 有了。是不是很惊讶？我们用 `mix phoenix.gen.html` 命令生成的样板，功能已经很完善：增删改查功能全都有了。我们需要的，只是在样板基础上做点修改。
 
-[接下来](04-user-register/01-username-required.md)几章，我们将一步步完成本章开头列出的限制条件。
+[接下来](/04-user-register/01-username-required.md)几章，我们将一步步完成本章开头列出的限制条件。
 
 
-上一章：[Menu 项目规划](03-project-menu/03-project-menu.md)
-下一章：[username 必填](04-user-register/01-username-required.md)
+上一章：[Menu 项目规划](/03-project-menu/03-project-menu.md)
+下一章：[username 必填](/04-user-register/01-username-required.md)
 
