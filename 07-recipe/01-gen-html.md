@@ -37,7 +37,7 @@ Remember to update your repository by running migrations:
 
     $ mix ecto.migrate
 ```
-![mix phoenix.gen.html Recipe](../img/07-generate-recipe.png)
+![mix phoenix.gen.html Recipe](/img/07-generate-recipe.png)
 
 我们先按照提示把 `resources "/recipes", RecipeController` 加入 `web/router.ex` 文件中：
 
@@ -107,5 +107,6 @@ Finished in 0.5 seconds
 
 
 上一章：[安全限制](/06-restrict-access/06-restrict-access.md)
+
 下一章：[Recipe 属性开发](/07-recipe/02-recipe-scheme.md)
 
