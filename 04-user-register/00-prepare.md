@@ -50,7 +50,7 @@
 $ cd tv_recipe
 $ mix phoenix.gen.html User users username:string:unique email:string:unique password:string
 ```
-![mix phoenix.gen.html 命令](../img/02-mix-phoenix.gen.html.png)
+![mix phoenix.gen.html 命令](/img/02-mix-phoenix.gen.html.png)
 
 执行命令后的输出如下：
 
@@ -126,7 +126,7 @@ Generated tv_recipe app
 
 之后在浏览器中打开网址 `http://localhost:4000/users/new`：
 
-![创建用户页面截图](../img/04-users-new-page.png)
+![创建用户页面截图](/img/04-users-new-page.png)
 
 有了。是不是很惊讶？我们用 `mix phoenix.gen.html` 命令生成的样板，功能已经很完善：增删改查功能全都有了。我们需要的，只是在样板基础上做点修改。
 
