@@ -2,8 +2,6 @@
 
 ![](img/phoenix.png)
 
-<br>
-
 ## 目录
 
 * ### 第一部分：
@@ -38,14 +36,8 @@
   * [Recipe 控制器](07-recipe/03-recipe-controller.md)
   * [菜谱视图](07-recipe/04-recipe-view.md)
   * [添加视频地址](07-recipe/05-recipe-tv-url.md)
-  
-<br>
-<br>
 
 **如有错误，欢迎指正**
-
-<br>
-<br>
 
 #### 鸣谢：
   * [Sam Chen](https://github.com/chenxsan)
