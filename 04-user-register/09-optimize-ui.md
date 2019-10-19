@@ -4,13 +4,13 @@
 
 1. 错误信息不明显
 
-    ![Phoenix 用户名不为空的错误信息](../img/04-users-blank-username.png)
+    ![Phoenix 用户名不为空的错误信息](/img/04-users-blank-username.png)
 
     截图中可以看到，“请填写”三个字不突出，很多时候用户会视而不见。
 
 2. 密码输入框
 
-    ![密码输入框](../img/04-password-input.png)
+    ![密码输入框](/img/04-password-input.png)
 
     在密码框中输入的内容，现在是明文显示，通常常是用 * 号代替。
 
@@ -58,7 +58,7 @@ index 5857c33..b047466 100644
 ```
 这样我们的错误提示界面就会变成：
 
-![用户名不为空](../img/04-username-has-error.png)
+![用户名不为空](/img/04-username-has-error.png)
 
 非常醒目。至于 Phoenix 生成的模板里为什么不带 `has-error`，可以看 [github 上的一个 issue](https://github.com/phoenixframework/phoenix/issues/1961)。
 
