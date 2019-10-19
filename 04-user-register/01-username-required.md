@@ -37,7 +37,7 @@ index b7713a0..87ce321 100644
 
 打开网址，提交空白用户名，页面上已经显示“请填写”了：
 
-![show error when user submit blank username](../img/04-users-blank-username.png)
+![show error when user submit blank username](/img/04-users-blank-username.png)
 
 很好，但请注意，我们这是**人肉测试**。
 
