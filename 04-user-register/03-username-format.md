@@ -92,6 +92,7 @@ index 644f4c3..73fc189 100644
 
 
 上一章：[验证 username 的唯一性](/04-user-register/02-username-unique.md)
+
 下一章：[限制 `username` 的长度](/04-user-register/04-username-length.md)
 
 
