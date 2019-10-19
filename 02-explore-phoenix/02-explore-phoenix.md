@@ -8,7 +8,7 @@ $ mix phx.server
 ```
 打开浏览器，访问 [http://localhost:4000](http://localhost:4000) 网址，我们会看到如下截图所示的内容：
 
-![PhoenixFramework Page](img/02-phoenixframework-page-screenshot.png)
+![PhoenixFramework Page](/img/02-phoenixframework-page-screenshot.png)
 
 那么，从输入网址到返回页面期间，都发生了什么？让我们来简单了解一下。
 
@@ -100,7 +100,7 @@ $ git commit -m 'init`
     ```
 7. 再看 `http://localhost:4000/help` 网址：
 
-    ![帮助页面截图](img/02-help-page-screenshot.png)
+    ![帮助页面截图](/img/02-help-page-screenshot.png)
 
     这一次，页面终于显示正常。
 
