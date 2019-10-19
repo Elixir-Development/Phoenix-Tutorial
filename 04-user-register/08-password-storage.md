@@ -2,7 +2,7 @@
 
 如果你在前面章节里，曾在浏览器里打开过页面，注册过用户，则打开 [http://localhost:4000/users](http://localhost:4000/users) 网址，你会看到类似如下截图的内容：
 
-![users list](../img/04-user-list.png)
+![users list](/img/04-user-list.png)
 
 密码字段一览无余，如果数据库被人入侵，则用户密码全部暴露。
 
@@ -304,5 +304,6 @@ Finished in 0.2 seconds
 
 
 上一章：[`password` 规则](/04-user-register/07-password-rules.md)
+
 下一章：[优化用户注册界面](/04-user-register/09-optimize-ui.md)
 
