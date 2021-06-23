@@ -3,13 +3,13 @@
 如果你已完成[上一章](/04-user-register/01-username-required.md)，你可能已经猜到，这章的规则要怎么写，不过在那之前，还是让我们先写个测试：
 
 ```elixir
-diff --git a/test/models/user_test.exs b/test/models/user_test.exs
+diff --git a/test/tv_recipe/users_test.exs b/test/tv_recipe/users_test.exs
 index 4c174ab..47df0c7 100644
---- a/test/models/user_test.exs
-+++ b/test/models/user_test.exs
+--- a/test/tv_recipe/users_test.exs
++++ b/test/tv_recipe/users_test.exs
 @@ -20,4 +20,13 @@ defmodule TvRecipe.UserTest do
      attrs = %{@valid_attrs | username: ""}
-     assert {:username, "请填写"} in errors_on(%User{}, attrs)
+     assert %{username: ["请填写"]} = errors_on(%User{}, attrs)
    end
 +
 +  test "username should be unique" do
@@ -22,7 +22,7 @@ index 4c174ab..47df0c7 100644
 +  end
  end
 ```
-此时运行 `mix test test/models/user_test.exs`，我们的测试会全部通过。这是因为，我们在执行 `mix phoenix.gen.html` 命令时，指定了 `unique` 给 `username` 字段，这样生成的 `User` 结构里，我们已经有了唯一性的限定规则，如下所示：
+此时运行 `mix test test/tv_recipe/users_test.exs`，我们的测试会全部通过。这是因为，我们在执行 `mix phx.gen.html` 命令时，指定了 `unique` 给 `username` 字段，这样生成的 `User` 结构里，我们已经有了唯一性的限定规则，如下所示：
 
 ```elixir
 def changeset(struct, params \\ %{}) do
@@ -35,70 +35,38 @@ end
 ```
 但上面的测试里，我们只知道插入同名用户时，Phoenix 会返回错误，至于错误是什么，我们还没有检查。
 
-还记得前一章里用于检查给定数据的错误的 `errors_on` 函数么？
-
-```elixir
-def errors_on(struct, data) do
-  struct.__struct__.changeset(struct, data)
-  |> Ecto.Changeset.traverse_errors(&TvRecipe.ErrorHelpers.translate_error/1)
-  |> Enum.flat_map(fn {key, errors} -> for msg <- errors, do: {key, msg} end)
-end
-```
-但很可惜，它接收的是一个结构（struct）与映射。而我们现在手头上只有一个 `TvRecipe.Repo.insert(user_changeset)` 返回的 `changset` 可用。
-
-我们要在 `tv_recipe/test/support/model_case.ex` 文件中再定义一个 `errors_on` 函数，这一回，它接收一个 `changeset` 参数：
-
-```elixir
-diff --git a/test/support/model_case.ex b/test/support/model_case.ex
-index 2b9cb59..85006b5 100644
---- a/test/support/model_case.ex
-+++ b/test/support/model_case.ex
-@@ -62,4 +62,10 @@ defmodule TvRecipe.ModelCase do
-     |> Ecto.Changeset.traverse_errors(&TvRecipe.ErrorHelpers.translate_error/1)
-     |> Enum.flat_map(fn {key, errors} -> for msg <- errors, do: {key, msg} end)
-   end
-+
-+  def errors_on(changeset) do
-+    changeset
-+    |> Ecto.Changeset.traverse_errors(&TvRecipe.ErrorHelpers.translate_error/1)
-+    |> Enum.flat_map(fn {key, errors} -> for msg <- errors, do: {key, msg} end)
-+  end
- end
-```
-是否很吃惊？要知道，如果是在 JavaScript 里写两个同名函数，后一个函数会覆盖前一个的定义，而 Elixir 下，我们可以定义多个同名函数，它们能处理不同的状况，而又互不干扰。
-
 我们来完善下我们上面的测试代码：
 
 ```elixir
-diff --git a/test/models/user_test.exs b/test/models/user_test.exs
+diff --git a/test/tv_recipe/users_test.exs b/test/tv_recipe/users_test.exs
 index 47df0c7..9748671 100644
---- a/test/models/user_test.exs
-+++ b/test/models/user_test.exs
+--- a/test/tv_recipe/users_test.exs
++++ b/test/tv_recipe/users_test.exs
 @@ -28,5 +28,8 @@ defmodule TvRecipe.UserTest do
 
      # 尝试插入同名用户，应报告错误
      assert {:error, changeset} = TvRecipe.Repo.insert(user_changeset)
 +
 +    # 错误信息为“用户名已被人占用”
-+    assert {:username, "用户名已被人占用"} in errors_on(changeset)
++    assert %{username: ["用户名已被人占用"]} = errors_on(changeset)
    end
  end
 ```
 
-再次运行 `mix test test/models/user_test.exs` 的结果是：
+再次运行 `mix test test/tv_recipe/users_test.exs` 的结果是：
 
 ```bash
-$ mix test test/models/user_test.exs
+$ mix test test/tv_recipe/users_test.exs
 .
 
   1) test username should be unique (TvRecipe.UserTest)
-     test/models/user_test.exs:24
+     test/tv_recipe/users_test.exs:24
      Assertion with in failed
-     code:  {:username, "用户名已被人占用"} in errors_on(changeset)
-     left:  {:username, "用户名已被人占用"}
+     code:  %{username: ["用户名已被人占用"]} = errors_on(changeset)
+     left:  %{username: ["用户名已被人占用"]}
      right: [username: "has already been taken"]
      stacktrace:
-       test/models/user_test.exs:33: (test)
+       test/tv_recipe/users_test.exs:33: (test)
 
 ..
 
@@ -109,13 +77,13 @@ Finished in 0.1 seconds
 
 这是当然，我们还未自定义用户名重复时的提示消息。
 
-打开 `web/models/user.ex` 文件，做如下修改：
+打开 `lib/tv_recipe/users/user.ex` 文件，做如下修改：
 
 ```elixir
-diff --git a/web/models/user.ex b/web/models/user.ex
+diff --git a/lib/tv_recipe/users/user.ex b/lib/tv_recipe/users/user.ex
 index 87ce321..88ad2af 100644
---- a/web/models/user.ex
-+++ b/web/models/user.ex
+--- a/lib/tv_recipe/users/user.ex
++++ b/lib/tv_recipe/users/user.ex
 @@ -16,7 +16,7 @@ defmodule TvRecipe.User do
      struct
      |> cast(params, [:username, :email, :password])
@@ -136,13 +104,13 @@ index 87ce321..88ad2af 100644
 我们先写个测试验证一下：
 
 ```elixir
-diff --git a/test/models/user_test.exs b/test/models/user_test.exs
+diff --git a/test/tv_recipe/users_test.exs b/test/tv_recipe/users_test.exs
 index 9748671..44cb21b 100644
---- a/test/models/user_test.exs
-+++ b/test/models/user_test.exs
+--- a/test/tv_recipe/users_test.exs
++++ b/test/tv_recipe/users_test.exs
 @@ -32,4 +32,13 @@ defmodule TvRecipe.UserTest do
      # 错误信息为“用户名已被人占用”
-     assert {:username, "用户名已被人占用"} in errors_on(changeset)
+     assert %{username: ["用户名已被人占用"]} = errors_on(changeset)
    end
 +
 +  test "username should be case insensitive" do
@@ -158,14 +126,14 @@ index 9748671..44cb21b 100644
 运行测试的结果是：
 
 ```bash
-$ mix test test/models/user_test.exs
+$ mix test test/tv_recipe/users_test.exs
 warning: variable "changeset" is unused
-  test/models/user_test.exs:42
+  test/tv_recipe/users_test.exs:42
 
 ...
 
   1) test username should be case insensitive (TvRecipe.UserTest)
-     test/models/user_test.exs:36
+     test/tv_recipe/users_test.exs:36
      match (=) failed
      code:  {:error, changeset} = TvRecipe.Repo.insert(another_user_changeset)
      right: {:ok,
@@ -175,7 +143,7 @@ warning: variable "changeset" is unused
               password: "some content",
               updated_at: ~N[2017-01-24 11:57:43.741109], username: "Chenxsan"}}
      stacktrace:
-       test/models/user_test.exs:42: (test)
+       test/tv_recipe/users_test.exs:42: (test)
 
 .
 
@@ -197,10 +165,10 @@ Finished in 0.1 seconds
 根据提示，我们的 `user.ex` 代码可以做如下修改：
 
 ```elixir
-diff --git a/web/models/user.ex b/web/models/user.ex
+diff --git a/lib/tv_recipe/users/user.ex b/lib/tv_recipe/users/user.ex
 index 88ad2af..fc07824 100644
---- a/web/models/user.ex
-+++ b/web/models/user.ex
+--- a/lib/tv_recipe/users/user.ex
++++ b/lib/tv_recipe/users/user.ex
 @@ -16,6 +16,7 @@ defmodule TvRecipe.User do
      struct
      |> cast(params, [:username, :email, :password])
@@ -218,7 +186,7 @@ index 88ad2af..fc07824 100644
 
 ## 数据库迁移
 
-在[用户注册一章](00-prepare.md)，我们用 `mix phoenix.gen.html` 生成了许多样板文件，其中有一条：
+在[用户注册一章](00-prepare.md)，我们用 `mix phx.gen.html` 生成了许多样板文件，其中有一条：
 
 ```bash
 * creating priv/repo/migrations/20170123145857_create_user.exs
@@ -297,10 +265,10 @@ $ mix ecto.migrate
 最后要记得将此前 `user.ex` 文件中 `String.downcase` 的修改撤销掉：
 
 ```elixir
-diff --git a/web/models/user.ex b/web/models/user.ex
+diff --git a/lib/tv_recipe/users/user.ex b/lib/tv_recipe/users/user.ex
 index fc07824..88ad2af 100644
---- a/web/models/user.ex
-+++ b/web/models/user.ex
+--- a/lib/tv_recipe/users/user.ex
++++ b/lib/tv_recipe/users/user.ex
 @@ -16,7 +16,6 @@ defmodule TvRecipe.User do
      struct
      |> cast(params, [:username, :email, :password])
@@ -314,14 +282,14 @@ index fc07824..88ad2af 100644
 再运行测试看看：
 
 ```bash
-mix test test/models/user_test.exs
+mix test test/tv_recipe/users_test.exs
 warning: variable "changeset" is unused
-  test/models/user_test.exs:42
+  test/tv_recipe/users_test.exs:42
 
 .
 
   1) test username should be case insensitive (TvRecipe.UserTest)
-     test/models/user_test.exs:36
+     test/tv_recipe/users_test.exs:36
      ** (Ecto.ConstraintError) constraint error when attempting to insert struct:
 
          * unique: users_lower_username_index
@@ -338,12 +306,12 @@ warning: variable "changeset" is unused
        (elixir) lib/enum.ex:1229: Enum."-map/2-lists^map/1-0-"/2
        (ecto) lib/ecto/repo/schema.ex:479: Ecto.Repo.Schema.constraints_to_errors/3
        (ecto) lib/ecto/repo/schema.ex:213: anonymous fn/13 in Ecto.Repo.Schema.do_insert/4
-       test/models/user_test.exs:42: (test)
+       test/tv_recipe/users_test.exs:42: (test)
 
 .
 
   2) test username should be unique (TvRecipe.UserTest)
-     test/models/user_test.exs:24
+     test/tv_recipe/users_test.exs:24
      ** (Ecto.ConstraintError) constraint error when attempting to insert struct:
 
          * unique: users_lower_username_index
@@ -360,7 +328,7 @@ warning: variable "changeset" is unused
        (elixir) lib/enum.ex:1229: Enum."-map/2-lists^map/1-0-"/2
        (ecto) lib/ecto/repo/schema.ex:479: Ecto.Repo.Schema.constraints_to_errors/3
        (ecto) lib/ecto/repo/schema.ex:213: anonymous fn/13 in Ecto.Repo.Schema.do_insert/4
-       test/models/user_test.exs:30: (test)
+       test/tv_recipe/users_test.exs:30: (test)
 
 .
 
@@ -370,10 +338,10 @@ Finished in 0.1 seconds
 情况变得更糟糕了，报告了 2 个错误。这是因为索引名称已经改变，而我们的代码还在使用默认的旧索引名。我们需要在 `unique_constraint` 里明确指出索引名称：
 
 ```elixir
-diff --git a/web/models/user.ex b/web/models/user.ex
+diff --git a/lib/tv_recipe/users/user.ex b/lib/tv_recipe/users/user.ex
 index 88ad2af..08e4054 100644
---- a/web/models/user.ex
-+++ b/web/models/user.ex
+--- a/lib/tv_recipe/users/user.ex
++++ b/lib/tv_recipe/users/user.ex
 @@ -16,7 +16,7 @@ defmodule TvRecipe.User do
      struct
      |> cast(params, [:username, :email, :password])
@@ -387,9 +355,9 @@ index 88ad2af..08e4054 100644
 再跑一遍测试：
 
 ```bash
-$ mix test test/models/user_test.exs
+$ mix test test/tv_recipe/users_test.exs
 warning: variable "changeset" is unused
-  test/models/user_test.exs:42
+  test/tv_recipe/users_test.exs:42
 
 .....
 
@@ -414,15 +382,15 @@ assert {:error, changeset} = TvRecipe.Repo.insert(another_user_changeset)
 让我们完善下测试：
 
 ```elixir
-diff --git a/test/models/user_test.exs b/test/models/user_test.exs
+diff --git a/test/tv_recipe/users_test.exs b/test/tv_recipe/users_test.exs
 index 9451c2d..975c7b1 100644
---- a/test/models/user_test.exs
-+++ b/test/models/user_test.exs
+--- a/test/tv_recipe/users_test.exs
++++ b/test/tv_recipe/users_test.exs
 @@ -40,5 +40,6 @@ defmodule TvRecipe.UserTest do
      # 尝试插入大小写不一致的用户名，应报告错误
      another_user_changeset = User.changeset(%User{}, %{@valid_attrs | username: "Chenxsan", email: "chenxsan+1@gmail.com"})
      assert {:error, changeset} = TvRecipe.Repo.insert(another_user_changeset)
-+    assert {:username, "用户名已被人占用"} in errors_on(changeset)
++    assert %{username: ["用户名已被人占用"]} = errors_on(changeset)
    end
  end
 ```

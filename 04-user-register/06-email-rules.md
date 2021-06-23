@@ -15,18 +15,18 @@
 首先，添加测试规则，验证 `email` 为空时的错误提示：
 
 ```elixir
-diff --git a/test/models/user_test.exs b/test/models/user_test.exs
+diff --git a/test/tv_recipe/users_test.exs b/test/tv_recipe/users_test.exs
 index f70d4a1..bae1e57 100644
---- a/test/models/user_test.exs
-+++ b/test/models/user_test.exs
+--- a/test/tv_recipe/users_test.exs
++++ b/test/tv_recipe/users_test.exs
 @@ -70,4 +70,9 @@ defmodule TvRecipe.UserTest do
-     assert {:username, "系统保留，无法注册，请更换"} in errors_on(%User{}, %{@valid_attrs | username: "admin"})
-     assert {:username, "系统保留，无法注册，请更换"} in errors_on(%User{}, %{@valid_attrs | username: "administrator"})
+     assert %{username: ["系统保留，无法注册，请更换"]} = errors_on(%User{}, %{@valid_attrs | username: "admin"})
+     assert %{username: ["系统保留，无法注册，请更换"]} = errors_on(%User{}, %{@valid_attrs | username: "administrator"})
    end
 +
 +  test "email should not be blank" do
 +    attrs = %{@valid_attrs | email: ""}
-+    assert {:email, "请填写"} in errors_on(%User{}, attrs)
++    assert %{email: ["请填写"]} = errors_on(%User{}, attrs)
 +  end
  end
 ```
@@ -39,18 +39,18 @@ index f70d4a1..bae1e57 100644
 我们先添加一个测试：
 
 ```elixir
-diff --git a/test/models/user_test.exs b/test/models/user_test.exs
+diff --git a/test/tv_recipe/users_test.exs b/test/tv_recipe/users_test.exs
 index bae1e57..67aab23 100644
---- a/test/models/user_test.exs
-+++ b/test/models/user_test.exs
+--- a/test/tv_recipe/users_test.exs
++++ b/test/tv_recipe/users_test.exs
 @@ -75,4 +75,9 @@ defmodule TvRecipe.UserTest do
      attrs = %{@valid_attrs | email: ""}
-     assert {:email, "请填写"} in errors_on(%User{}, attrs)
+     assert %{email: ["请填写"]} = errors_on(%User{}, attrs)
    end
 +
 +  test "email should contain @" do
 +    attrs = %{@valid_attrs | email: "ab"}
-+    assert {:email, "邮箱格式错误"} in errors_on(%User{}, attrs)
++    assert %{email: ["邮箱格式错误"]} = errors_on(%User{}, attrs)
 +  end
  end
  ```
@@ -60,10 +60,10 @@ index bae1e57..67aab23 100644
 下面在 `user.ex` 文件中添加 `validate_format` 验证规则：
 
 ```elixir
-diff --git a/web/models/user.ex b/web/models/user.ex
+diff --git a/lib/tv_recipe/users/user.ex b/lib/tv_recipe/users/user.ex
 index 35e4d0b..fef942b 100644
---- a/web/models/user.ex
-+++ b/web/models/user.ex
+--- a/lib/tv_recipe/users/user.ex
++++ b/lib/tv_recipe/users/user.ex
 @@ -21,6 +21,7 @@ defmodule TvRecipe.User do
      |> validate_length(:username, max: 15, message: "用户名最长 15 位")
      |> validate_exclusion(:username, ~w(admin administrator), message: "系统保留，无法注册，请更换")
@@ -81,13 +81,13 @@ index 35e4d0b..fef942b 100644
 仍是先写测试：
 
 ```elixir
-diff --git a/test/models/user_test.exs b/test/models/user_test.exs
+diff --git a/test/tv_recipe/users_test.exs b/test/tv_recipe/users_test.exs
 index 67aab23..f6c99e5 100644
---- a/test/models/user_test.exs
-+++ b/test/models/user_test.exs
+--- a/test/tv_recipe/users_test.exs
++++ b/test/tv_recipe/users_test.exs
 @@ -80,4 +80,16 @@ defmodule TvRecipe.UserTest do
      attrs = %{@valid_attrs | email: "ab"}
-     assert {:email, "邮箱格式错误"} in errors_on(%User{}, attrs)
+     assert %{email: ["邮箱格式错误"]} = errors_on(%User{}, attrs)
    end
 +
 +  test "email should be unique" do
@@ -99,7 +99,7 @@ index 67aab23..f6c99e5 100644
 +    assert {:error, changeset} = TvRecipe.Repo.insert(User.changeset(%User{}, %{@valid_attrs | username: "samchen"}))
 +
 +    # 错误信息为“邮箱已被人占用”
-+    assert {:email, "邮箱已被人占用"} in errors_on(changeset)
++    assert %{email: ["邮箱已被人占用"]} = errors_on(changeset)
 +  end
  end
  ```
@@ -109,10 +109,10 @@ index 67aab23..f6c99e5 100644
 打开 `user.ex` 文件，添加 `message` 如下：
 
 ```elixir
-diff --git a/web/models/user.ex b/web/models/user.ex
+diff --git a/lib/tv_recipe/users/user.ex b/lib/tv_recipe/users/user.ex
 index fef942b..54e7e4c 100644
---- a/web/models/user.ex
-+++ b/web/models/user.ex
+--- a/lib/tv_recipe/users/user.ex
++++ b/lib/tv_recipe/users/user.ex
 @@ -22,6 +22,6 @@ defmodule TvRecipe.User do
      |> validate_exclusion(:username, ~w(admin administrator), message: "系统保留，无法注册，请更换")
      |> unique_constraint(:username, name: :users_lower_username_index, message: "用户名已被人占用")
@@ -128,13 +128,13 @@ index fef942b..54e7e4c 100644
 最后，还有一个测试，是关于 `email` 大小写的，即 `a@b` 与 `A@b` 应当认为是一致的：
 
 ```elixir
-diff --git a/test/models/user_test.exs b/test/models/user_test.exs
+diff --git a/test/tv_recipe/users_test.exs b/test/tv_recipe/users_test.exs
 index f6c99e5..82dcf6a 100644
---- a/test/models/user_test.exs
-+++ b/test/models/user_test.exs
+--- a/test/tv_recipe/users_test.exs
++++ b/test/tv_recipe/users_test.exs
 @@ -92,4 +92,14 @@ defmodule TvRecipe.UserTest do
      # 错误信息为“邮箱已被人占用”
-     assert {:email, "邮箱已被人占用"} in errors_on(changeset)
+     assert %{email: ["邮箱已被人占用"]} = errors_on(changeset)
    end
 +
 +  test "email should be case insensitive" do
@@ -144,7 +144,7 @@ index f6c99e5..82dcf6a 100644
 +    # 尝试插入大小写不一致的邮箱，应报告错误
 +    another_user_changeset = User.changeset(%User{}, %{@valid_attrs | username: "samchen", email: "chenXsan@gmail.com"})
 +    assert {:error, changeset} = TvRecipe.Repo.insert(another_user_changeset)
-+    assert {:email, "邮箱已被人占用"} in errors_on(changeset)
++    assert %{email: ["邮箱已被人占用"]} = errors_on(changeset)
 +  end
  end
  ```
@@ -196,10 +196,10 @@ index f6c99e5..82dcf6a 100644
 4. 最后，将新索引的名称赋给 `unique_constraint` 的 `name` 参数：
 
     ```elixir
-    diff --git a/web/models/user.ex b/web/models/user.ex
+    diff --git a/lib/tv_recipe/users/user.ex b/lib/tv_recipe/users/user.ex
     index 54e7e4c..9307a3c 100644
-    --- a/web/models/user.ex
-    +++ b/web/models/user.ex
+    --- a/lib/tv_recipe/users/user.ex
+    +++ b/lib/tv_recipe/users/user.ex
     @@ -22,6 +22,6 @@ defmodule TvRecipe.User do
         |> validate_exclusion(:username, ~w(admin administrator), message: "系统保留，无法注册，请更换")
         |> unique_constraint(:username, name: :users_lower_username_index, message: "用户名已被人占用")
@@ -212,7 +212,7 @@ index f6c99e5..82dcf6a 100644
 再跑一遍测试：
 
 ```bash
-$ mix test test/models/user_test.exs
+$ mix test test/tv_recipe/users_test.exs
 ..............
 
 Finished in 0.2 seconds

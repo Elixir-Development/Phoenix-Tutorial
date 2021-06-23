@@ -13,10 +13,10 @@ episode|integer|第几集|必填|1
 content|text|内容|必填|
 user_id|integer|关联用户 id|必填|
 
-这里我们可以直接使用 `mix phoenix.gen.html` 命令来生成菜谱相关的所有文件：
+这里我们可以直接使用 `mix phx.gen.html` 命令来生成菜谱相关的所有文件：
 
 ```bash
-$ mix phoenix.gen.html Recipe recipes name title season:integer episode:integer content:text user_id:references:users
+$ mix phx.gen.html Recipes Recipe recipes name title season:integer episode:integer content:text user_id:references:users
 * creating web/controllers/recipe_controller.ex
 * creating web/templates/recipe/edit.html.eex
 * creating web/templates/recipe/form.html.eex
@@ -37,7 +37,7 @@ Remember to update your repository by running migrations:
 
     $ mix ecto.migrate
 ```
-![mix phoenix.gen.html Recipe](/img/07-generate-recipe.png)
+![mix phx.gen.html Recipe](/img/07-generate-recipe.png)
 
 我们先按照提示把 `resources "/recipes", RecipeController` 加入 `web/router.ex` 文件中：
 
@@ -46,7 +46,7 @@ diff --git a/web/router.ex b/web/router.ex
 index e0811dc..a6d7cd5 100644
 --- a/web/router.ex
 +++ b/web/router.ex
-@@ -20,6 +20,7 @@ defmodule TvRecipe.Router do
+@@ -20,6 +20,7 @@ defmodule TvRecipeWeb.Router do
      get "/", PageController, :index
      resources "/users", UserController, except: [:index, :delete]
      resources "/sessions", SessionController, only: [:new, :create, :delete]
@@ -56,21 +56,24 @@ index e0811dc..a6d7cd5 100644
 
 但请不要着急执行 `mix ecto.migrate`，我们有几个需要调整的地方：
 
+注: 运行了的话可使用 `mix ecto.rollback` 回撤修改
+
 1. 新建的 `priv/repo/migrations/20170206013306_create_recipe.exs` 文件中，有如下一句代码：
 
     ```elixir
     add :user_id, references(:users, on_delete: :nothing)
     ```
     `on_delete` 决定 `recipe` 关联的 `user` 被删时，我们要如何处置 `recipe`。`:nothing` 表示不动 `recipe`，`:delete_all` 表示悉数删除，这里我们使用 `:delete_all`。
-2. 新建的 `web/models/recipe.ex` 文件中，有一句代码：
+2. 新建的 `lib/tv_recipe/recipes/recipe.ex` 文件中，有一句代码要替换：
 
     ```elixir
-    belongs_to :user, TvRecipe.User
+    -field :user_id, :id
+    +belongs_to :user, TvRecipe.Users.User
     ```
     因为 `Recipe` 与 `User` 的关系是双向的，所以我们需要在 `user.ex` 文件中增加一句：
     
     ```elixir
-    has_many :recipes, TvRecipe.Recipe
+    has_many :recipes, TvRecipe.Recipes.Recipe
     ```
 3. 我们需要在 `recipe.ex` 文件中给 `season` 与 `episode` 设置默认值：
 

@@ -12,7 +12,7 @@
       {:ok, _user} ->
         conn
         |> put_flash(:info, "User created successfully.")
-        |> redirect(to: user_path(conn, :index))
+        |> redirect(to: Routes.user_path(conn, :index))
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -32,12 +32,12 @@ index 95d3108..26055e3 100644
 @@ -17,8 +17,11 @@ defmodule TvRecipe.UserControllerTest do
 
    test "creates resource and redirects when data is valid", %{conn: conn} do
-     conn = post conn, user_path(conn, :create), user: @valid_attrs
--    assert redirected_to(conn) == user_path(conn, :index)
-+    assert redirected_to(conn) == page_path(conn, :index)
+     conn = post conn, Routes.user_path(conn, :create), user: @valid_attrs
+-    assert redirected_to(conn) == Routes.user_path(conn, :index)
++    assert redirected_to(conn) == Routes.page_path(conn, :index)
      assert Repo.get_by(User, @valid_attrs |> Map.delete(:password))
 +    # 注册后自动登录，检查首页是否包含用户名
-+    conn = get conn, page_path(conn, :index)
++    conn = get conn, Routes.page_path(conn, :index)
 +    assert html_response(conn, 200) =~ Map.get(@valid_attrs, :username)
    end
 ```
@@ -56,9 +56,9 @@ index 7d13c5f..8d8a6f5 100644
 +      {:ok, user} ->
          conn
          |> put_flash(:info, "User created successfully.")
--        |> redirect(to: user_path(conn, :index))
+-        |> redirect(to: Routes.user_path(conn, :index))
 +        |> put_session(:user_id, user.id)
-+        |> redirect(to: page_path(conn, :index))
++        |> redirect(to: Routes.page_path(conn, :index))
        {:error, changeset} ->
          render(conn, "new.html", changeset: changeset)
      end

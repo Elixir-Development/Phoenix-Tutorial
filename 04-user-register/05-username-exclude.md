@@ -5,18 +5,18 @@
 我们从测试写起：
 
 ```elixir
-diff --git a/test/models/user_test.exs b/test/models/user_test.exs
+diff --git a/test/tv_recipe/users_test.exs b/test/tv_recipe/users_test.exs
 index 26a7735..f70d4a1 100644
---- a/test/models/user_test.exs
-+++ b/test/models/user_test.exs
+--- a/test/tv_recipe/users_test.exs
++++ b/test/tv_recipe/users_test.exs
 @@ -65,4 +65,9 @@ defmodule TvRecipe.UserTest do
      changeset = User.changeset(%User{}, attrs)
-     assert {:username, "用户名最长 15 位"} in errors_on(changeset)
+     assert %{username: ["用户名最长 15 位"]} = errors_on(changeset)
    end
 +
 +  test "username should not be admin or administrator" do
-+    assert {:username, "系统保留，无法注册，请更换"} in errors_on(%User{}, %{@valid_attrs | username: "admin"})
-+    assert {:username, "系统保留，无法注册，请更换"} in errors_on(%User{}, %{@valid_attrs | username: "administrator"})
++    assert %{username: ["系统保留，无法注册，请更换"]} = errors_on(%User{}, %{@valid_attrs | username: "admin"})
++    assert %{username: ["系统保留，无法注册，请更换"]} = errors_on(%User{}, %{@valid_attrs | username: "administrator"})
 +  end
  end
 ```
@@ -24,10 +24,10 @@ index 26a7735..f70d4a1 100644
 然后是添加规则，照例还是在 `user.ex` 文件中：
 
 ```elixir
-diff --git a/web/models/user.ex b/web/models/user.ex
+diff --git a/lib/tv_recipe/users/user.ex b/lib/tv_recipe/users/user.ex
 index 8c68e6d..35e4d0b 100644
---- a/web/models/user.ex
-+++ b/web/models/user.ex
+--- a/lib/tv_recipe/users/user.ex
++++ b/lib/tv_recipe/users/user.ex
 @@ -19,6 +19,7 @@ defmodule TvRecipe.User do
      |> validate_format(:username, ~r/^[a-zA-Z0-9_]+$/, message: "用户名只允许使用英文字母、数字及下划线")
      |> validate_length(:username, min: 3, message: "用户名最短 3 位")

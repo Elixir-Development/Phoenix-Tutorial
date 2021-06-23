@@ -1,6 +1,6 @@
 # 菜谱视图
 
-我们执行 [`mix phoenix.gen.html` 命令](https://github.com/phoenixframework/phoenix/blob/master/lib/mix/tasks/phoenix.gen.html.ex#L14)时，它会生成如下文件：
+我们执行 [`mix phx.gen.html` 命令](https://github.com/phoenixframework/phoenix/blob/master/lib/mix/tasks/phoenix.gen.html.ex#L14)时，它会生成如下文件：
 
 * a schema in web/models
 * a view in web/views
@@ -16,8 +16,8 @@
 首先在 `test/views` 目录下新建一个 `recipe_view_test.exs` 文件，然后准备好如下内容：
 
 ```elixir
-defmodule TvRecipe.RecipeViewTest do
-  use TvRecipe.ConnCase, async: true
+defmodule TvRecipeWeb.RecipeViewTest do
+  use TvRecipeWeb.ConnCase, async: true
 
   # Bring render/3 and render_to_string/3 for testing custom views
   import Phoenix.View
@@ -50,14 +50,15 @@ index be4148a..8174c14 100644
    # Bring render/3 and render_to_string/3 for testing custom views
    import Phoenix.View
 
-+  alias TvRecipe.Recipe
++  alias TvRecipe.Recipes.Recipe
++  @recipe1 %{id: "1", name: "淘米", title: "侠饭", season: "1", episode: "1", content: "洗掉米表面的淀粉", user_id: "999"}
++  @recipe2 %{id: "2", name: "煮饭", title: "侠饭", season: "1", episode: "1", content: "浸泡", user_id: "888"}
 +
 +  test "render index.html", %{conn: conn} do
-+    recipes = [%Recipe{id: "1", name: "淘米", title: "侠饭", season: "1", episode: "1", content: "洗掉米表面的淀粉", user_id: "999"},
-+      %Recipe{id: "2", name: "煮饭", title: "侠饭", season: "1", episode: "1", content: "浸泡", user_id: "888"}]
-+    content = render_to_string(TvRecipe.RecipeView, "index.html", conn: conn, recipes: recipes)
++    recipes = [struct(Recipe, @recipe1), struct(Recipe, @recipe2)]
++    content = render_to_string(TvRecipeWeb.RecipeView, "index.html", conn: conn, recipes: recipes)
 +    # 页面上包含标题 Listing recipes
-+    assert String.contains?(content, "Listing recipes")
++    assert String.contains?(content, "Listing Recipes")
 +    for recipe <- recipes do
 +      # 页面上包含菜谱名
 +      assert String.contains?(content, recipe.name)
@@ -163,7 +164,7 @@ index a1b75c6..7bd839c 100644
 +++ b/test/controllers/user_controller_test.exs
 @@ -29,6 +29,7 @@ defmodule TvRecipe.UserControllerTest do
      # 注册后自动登录，检查首页是否包含用户名
-     conn = get conn, page_path(conn, :index)
+     conn = get conn, Routes.page_path(conn, :index)
      assert html_response(conn, 200) =~ Map.get(@valid_attrs, :username)
 +    assert html_response(conn, 200) =~ "菜谱"
    end
@@ -176,11 +177,11 @@ index b13f370..49240c9 100644
 @@ -19,6 +19,7 @@
              <li><a href="http://www.phoenixframework.org/docs">Get Started</a></li>
              <%= if @current_user do %>
-               <li><%= link @current_user.username, to: user_path(@conn, :show, @current_user) %></li>
-+              <li><%= link "菜谱", to: recipe_path(@conn, :index) %></li>
-               <li><%= link "退出", to: session_path(@conn, :delete, @current_user), method: "delete" %></li>
+               <li><%= link @current_user.username, to: Routes.user_path(@conn, :show, @current_user) %></li>
++              <li><%= link "菜谱", to: Routes.recipe_path(@conn, :index) %></li>
+               <li><%= link "退出", to: Routes.session_path(@conn, :delete, @current_user), method: "delete" %></li>
              <% else %>
-               <li><%= link "登录", to: session_path(@conn, :new) %></li>
+               <li><%= link "登录", to: Routes.session_path(@conn, :new) %></li>
 ```
 
 运行测试：

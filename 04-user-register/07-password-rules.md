@@ -13,23 +13,23 @@
 首先，是添加两个测试：
 
 ```elixir
-diff --git a/test/models/user_test.exs b/test/models/user_test.exs
+diff --git a/test/tv_recipe/users_test.exs b/test/tv_recipe/users_test.exs
 index 82dcf6a..8689f4e 100644
---- a/test/models/user_test.exs
-+++ b/test/models/user_test.exs
+--- a/test/tv_recipe/users_test.exs
++++ b/test/tv_recipe/users_test.exs
 @@ -102,4 +102,14 @@ defmodule TvRecipe.UserTest do
      assert {:error, changeset} = TvRecipe.Repo.insert(another_user_changeset)
-     assert {:email, "邮箱已被人占用"} in errors_on(changeset)
+     assert %{email: ["邮箱已被人占用"]} = errors_on(changeset)
    end
 +
 +  test "password is required" do
 +    attrs = %{@valid_attrs | password: ""}
-+    assert {:password, "请填写"} in errors_on(%User{}, attrs)
++    assert %{password: ["请填写"]} = errors_on(%User{}, attrs)
 +  end
 +
 +  test "password's length should be larger than 6" do
 +    attrs = %{@valid_attrs | password: String.duplicate("1", 5)}
-+    assert {:password, "密码最短 6 位"} in errors_on(%User{}, attrs)
++    assert %{password: ["密码最短 6 位"]} = errors_on(%User{}, attrs)
 +  end
  end
 ```
@@ -41,10 +41,10 @@ index 82dcf6a..8689f4e 100644
 打开 `user.ex` 文件，添加一行 `validate_length`：
 
 ```elixir
-diff --git a/web/models/user.ex b/web/models/user.ex
+diff --git a/lib/tv_recipe/users/user.ex b/lib/tv_recipe/users/user.ex
 index 9307a3c..3069e79 100644
---- a/web/models/user.ex
-+++ b/web/models/user.ex
+--- a/lib/tv_recipe/users/user.ex
++++ b/lib/tv_recipe/users/user.ex
 @@ -23,5 +23,6 @@ defmodule TvRecipe.User do
      |> unique_constraint(:username, name: :users_lower_username_index, message: "用户名已被人占用")
      |> validate_format(:email, ~r/@/, message: "邮箱格式错误")

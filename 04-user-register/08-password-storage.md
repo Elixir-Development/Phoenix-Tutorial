@@ -19,10 +19,11 @@ index a71d654..3320fc8 100644
 +++ b/mix.exs
 @@ -19,7 +19,7 @@ defmodule TvRecipe.Mixfile do
    def application do
-     [mod: {TvRecipe, []},
-      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
--                    :phoenix_ecto, :postgrex]]
-+                    :phoenix_ecto, :postgrex, :comeonin]]
+     [
+       mod: {TvRecipe.Application, []},
+-      extra_applications: [:logger, :runtime_tools]
++      extra_applications: [:logger, :runtime_tools, :comeonin]
+     ]
    end
 
    # Specifies which paths to compile per environment.
@@ -30,9 +31,9 @@ index a71d654..3320fc8 100644
       {:phoenix_html, "~> 2.6"},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
--     {:cowboy, "~> 1.0"}]
-+     {:cowboy, "~> 1.0"},
-+     {:comeonin, "~> 3.0"}]
+-     {:plug_cowboy, "~> 2.0"}
++     {:plug_cowboy, "~> 2.0"},
++     {:comeonin, "~> 3.0"}
    end
    ```
 
@@ -41,26 +42,26 @@ index a71d654..3320fc8 100644
 接着在命令行下执行：
 
 ```bash
-$ mix do deps.get, compile
+$ mix do deps.get, deps.compile
 ```
 该命令从远程下载了我们新增的 `comeonin` 依赖并编译。
 
-那么，怎么确认 `comeonin` 安装成功？之前，我们一直是用 `mix phoenix.server` 命令来启动服务器的，接下来，我们要换一种启动方式：
+那么，怎么确认 `comeonin` 安装成功？之前，我们一直是用 `mix phx.server` 命令来启动服务器的，接下来，我们要换一种启动方式：
 
 ```bash
-$ iex -S mix phoenix.server
+$ iex -S mix phx.server
 ```
 区别在哪？我们来看看后者启动后的结果：
 
 ```
-$ iex -S mix phoenix.server
+$ iex -S mix phx.server
 Erlang/OTP 19 [erts-8.2] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
 
 [info] Running TvRecipe.Endpoint with Cowboy using http://localhost:4000
 Interactive Elixir (1.4.0) - press Ctrl+C to exit (type h() ENTER for help)
 iex(1)> 25 Jan 09:53:09 - info: compiled 6 files into 2 files, copied 3 in 2.1 sec
 ```
-看到区别了么？我们用 `iex -S mix phoenix.server` 启动后，可以使用 Elixir 的 [`iex`](http://elixir-lang.org/docs/stable/iex/IEx.html)。
+看到区别了么？我们用 `iex -S mix phx.server` 启动后，可以使用 Elixir 的 [`iex`](http://elixir-lang.org/docs/stable/iex/IEx.html)。
 
 比如，我们可以输入 `Com` 然后按 Tab 键：
 
@@ -116,10 +117,10 @@ iex(1)> 25 Jan 09:53:09 - info: compiled 6 files into 2 files, copied 3 in 2.1 s
     不，我们留着 `password`，但要给它加上 `virtual: true`，表示它是个临时字段，不存储到数据库中：
 
     ```elixir
-    diff --git a/web/models/user.ex b/web/models/user.ex
+    diff --git a/lib/tv_recipe/users/user.ex b/lib/tv_recipe/users/user.ex
     index 3069e79..e60e839 100644
-    --- a/web/models/user.ex
-    +++ b/web/models/user.ex
+    --- a/lib/tv_recipe/users/user.ex
+    +++ b/lib/tv_recipe/users/user.ex
     @@ -4,7 +4,8 @@ defmodule TvRecipe.User do
       schema "users" do
         field :username, :string
@@ -179,10 +180,10 @@ iex(1)> 25 Jan 09:53:09 - info: compiled 6 files into 2 files, copied 3 in 2.1 s
 我们可以在 `changeset` 末尾再加一道工序：
 
 ```elixir
-diff --git a/web/models/user.ex b/web/models/user.ex
+diff --git a/lib/tv_recipe/users/user.ex b/lib/tv_recipe/users/user.ex
 index e60e839..58447c0 100644
---- a/web/models/user.ex
-+++ b/web/models/user.ex
+--- a/lib/tv_recipe/users/user.ex
++++ b/lib/tv_recipe/users/user.ex
 @@ -25,5 +25,6 @@ defmodule TvRecipe.User do
      |> validate_format(:email, ~r/@/, message: "邮箱格式错误")
      |> unique_constraint(:email, name: :users_lower_email_index, message: "邮箱已被人占用")
@@ -208,10 +209,10 @@ changeset = put_password_hash(changeset)
 现在，我们来定义 `put_password_hash` 函数：
 
 ```elixir
-diff --git a/web/models/user.ex b/web/models/user.ex
+diff --git a/lib/tv_recipe/users/user.ex b/lib/tv_recipe/users/user.ex
 index 58447c0..690a1ed 100644
---- a/web/models/user.ex
-+++ b/web/models/user.ex
+--- a/lib/tv_recipe/users/user.ex
++++ b/lib/tv_recipe/users/user.ex
 @@ -27,4 +27,13 @@ defmodule TvRecipe.User do
      |> validate_length(:password, min: 6, message: "密码最短 6 位")
      |> put_password_hash()
@@ -244,13 +245,13 @@ index 58447c0..690a1ed 100644
 当然，我们还要添加一个测试，用 [Comeonin.Bcrypt.checkpw](https://hexdocs.pm/comeonin/Comeonin.Bcrypt.html#checkpw/2) 来保证 `put_password_hash` 函数的结果：
 
 ```elixir
-diff --git a/test/models/user_test.exs b/test/models/user_test.exs
+diff --git a/test/tv_recipe/users_test.exs b/test/tv_recipe/users_test.exs
 index 8689f4e..6e946b0 100644
---- a/test/models/user_test.exs
-+++ b/test/models/user_test.exs
+--- a/test/tv_recipe/users_test.exs
++++ b/test/tv_recipe/users_test.exs
 @@ -112,4 +112,9 @@ defmodule TvRecipe.UserTest do
      attrs = %{@valid_attrs | password: String.duplicate("1", 5)}
-     assert {:password, "密码最短 6 位"} in errors_on(%User{}, attrs)
+     assert %{password: ["密码最短 6 位"]} = errors_on(%User{}, attrs)
    end
 +
 +  test "password should be hashed" do
@@ -263,7 +264,7 @@ index 8689f4e..6e946b0 100644
 运行测试：
 
 ```bash
-mix test test/models/user_test.exs
+mix test test/tv_recipe/users_test.exs
 .................
 
 Finished in 4.2 seconds
@@ -292,7 +293,7 @@ index 0ff4a98..1743d57 100644
 再次运行测试：
 
 ```bash
-mix test test/models/user_test.exs
+mix test test/tv_recipe/users_test.exs
 .................
 
 Finished in 0.2 seconds
