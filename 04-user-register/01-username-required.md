@@ -1,6 +1,6 @@
 # username 必填
 
-[上一章](/04-user-register/00-prepare.md)里，我们用 `mix phoenix.gen.html` 命令创建出完整用户界面，并且具备增加、删除、更改、查询用户的功能。
+[上一章](/04-user-register/00-prepare.md)里，我们用 `mix phx.gen.html` 命令创建出完整用户界面，并且具备增加、删除、更改、查询用户的功能。
 
 这一章，我们将实现 `username` 的第一个规则：`username` 必填，如果未填写，提示用户`请填写`。
 
@@ -20,7 +20,7 @@
 让我们加上试试：
 
 ```elixir
-diff --git a/web/models/user.ex b/web/models/user.ex
+diff --git a/tv_recipe/users/user.ex b/tv_recipe/users/user.ex
 index b7713a0..87ce321 100644
 --- a/web/models/user.ex
 +++ b/web/models/user.ex
@@ -43,7 +43,7 @@ index b7713a0..87ce321 100644
 
 又或者，我们可以用 Phoenix 生成的测试文件来验证。
 
-打开 `test/models/user_test.exs` 文件，默认内容如下：
+打开 `test/tv_recipe/users_test.exs` 文件，默认内容如下：
 
 ```elixir
 defmodule TvRecipe.UserTest do
@@ -68,10 +68,10 @@ end
 文件中有两个变量，`@valid_attrs` 表示有效的 `User` 属性，`@invalid_attrs` 表示无效的 `User` 属性，我们按本章开头拟定的规则修改 `@valid_attrs`：
 
 ```elixir
-diff --git a/test/models/user_test.exs b/test/models/user_test.exs
+diff --git a/test/tv_recipe/users_test.exs b/test/tv_recipe/users_test.exs
 index 1d5494f..7c73207 100644
---- a/test/models/user_test.exs
-+++ b/test/models/user_test.exs
+--- a/test/tv_recipe/users_test.exs
++++ b/test/tv_recipe/users_test.exs
 @@ -3,7 +3,7 @@ defmodule TvRecipe.UserTest do
 
    alias TvRecipe.User
@@ -83,13 +83,13 @@ index 1d5494f..7c73207 100644
    test "changeset with valid attributes" do
 ```
 
-接着，在 `user_test.exs` 文件中添加一个新测试：
+接着，在 `users_test.exs` 文件中添加一个新测试：
 
 ```elixir
 diff --git a/test/models/user_test.exs b/test/models/user_test.exs
 index 7c73207..4c174ab 100644
---- a/test/models/user_test.exs
-+++ b/test/models/user_test.exs
+--- a/test/tv_recipe/users_test.exs
++++ b/test/tv_recipe/users_test.exs
 @@ -15,4 +15,9 @@ defmodule TvRecipe.UserTest do
      changeset = User.changeset(%User{}, @invalid_attrs)
      refute changeset.valid?
@@ -97,28 +97,39 @@ index 7c73207..4c174ab 100644
 +
 +  test "username should not be blank" do
 +    attrs = %{@valid_attrs | username: ""}
-+    assert {:username, "请填写"} in errors_on(%User{}, attrs)
++    assert %{username: ["请填写"] } = errors_on(%User{}, attrs)
 +  end
  end
 ```
 
 这里，`%{@valid_attrs | username: ""}` 是 Elixir 更新映射（Map）的一个方法。
 
-至于 `errors_on` 函数，它定义在 `tv_recipe/test/support/model_case.ex` 文件中：
+至于 `errors_on/2` 函数，它需要新增在 `test/support/data_case.ex` 文件中：
 
 ```elixir
-def errors_on(struct, data) do
-  struct.__struct__.changeset(struct, data)
-  |> Ecto.Changeset.traverse_errors(&TvRecipe.ErrorHelpers.translate_error/1)
-  |> Enum.flat_map(fn {key, errors} -> for msg <- errors, do: {key, msg} end)
+   def errors_on(changeset) do
+     Ecto.Changeset.traverse_errors(changeset, fn {message, opts} ->
+       Regex.replace(~r"%{(\w+)}", message, fn _, key ->
+         opts |> Keyword.get(String.to_existing_atom(key), key) |> to_string()
+       end)
+     end)
+   end
++
++  def errors_on(struct, attrs) do
++    changeset = struct.__struct__.changeset(struct, attrs)
++    errors_on(changeset)
++  end
 end
 ```
+
+是否很吃惊？要知道，如果是在 JavaScript 里写两个同名函数，后一个函数会覆盖前一个的定义，而 Elixir 下，我们可以定义多个同名函数，它们能处理不同的状况，而又互不干扰。
+
 它检查给定数据中的错误消息，并返回给我们。
 
 现在在命令行下运行：
 
 ```bash
-$ mix test test/models/user_test.exs
+$ mix test test/tv_recipe/users_test.exs
 ```
 结果如下：
 

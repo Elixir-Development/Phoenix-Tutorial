@@ -47,7 +47,7 @@ $ mix local.hex --force
 ## 安装 Phoenix
 
 ```bash
-$ mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_new.ez
+mix archive.install hex phx_new 1.5.9
 ```
 
 ## 安装 Node.js（>=5.0.0）

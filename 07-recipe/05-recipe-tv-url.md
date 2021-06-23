@@ -73,12 +73,12 @@ index 8b093ed..f1ba3f9 100644
 --- a/test/models/recipe_test.exs
 +++ b/test/models/recipe_test.exs
 @@ -60,4 +60,9 @@ defmodule TvRecipe.RecipeTest do
-     assert {:user_id, "does not exist"} in errors_on(changeset)
+     assert %{user_id: ["does not exist"]} = errors_on(changeset)
    end
 
 +  test "url should be valid" do
 +    attrs = Map.put(@valid_attrs, :url, "fjsalfa")
-+    assert {:url, "url 错误"} in errors_on(%Recipe{}, attrs)
++    assert %{url: ["url 错误"]} = errors_on(%Recipe{}, attrs)
 +  end
 +
  end
@@ -92,9 +92,9 @@ mix test
   1) test url should be valid (TvRecipe.RecipeTest)
      test/models/recipe_test.exs:63
      Assertion with in failed
-     code:  {:url, "url 错误"} in errors_on(%Recipe{}, attrs)
-     left:  {:url, "url 错误"}
-     right: []
+     code:  %{url: ["url 错误"]} = errors_on(%Recipe{}, attrs)
+     left:  %{url: ["url 错误"]}
+     right: %{}
      stacktrace:
        test/models/recipe_test.exs:65: (test)
 
@@ -122,9 +122,11 @@ index 104db50..3b849c8 100644
 +
 +  defp validate_url(changeset, field, _options \\ []) do
 +    validate_change changeset, field, fn _, url ->
-+      case url |> String.to_charlist |> :http_uri.parse do
-+        {:ok, _} -> []
-+        {:error, _} -> [url: "url 错误"]
++     with %{host: _, scheme: scheme} <- :uri_string.parse(url),
++           true <- String.starts_with?(scheme, "http") do
++        []
++      else
++        _ -> [url: "url 错误"]
 +      end
 +    end
 +  end
@@ -141,27 +143,32 @@ diff --git a/test/views/recipe_view_test.exs b/test/views/recipe_view_test.exs
 index 8174c14..9695647 100644
 --- a/test/views/recipe_view_test.exs
 +++ b/test/views/recipe_view_test.exs
+-  @recipe1 %{id: "1", name: "淘米", title: "侠饭", season: "1", episode: "1", content: "洗掉米表面的淀粉", user_id: "999"}
+-  @recipe2 %{id: "2", name: "煮饭", title: "侠饭", season: "1", episode: "1", content: "浸泡", user_id: "888"}
+# 使用带有 url field 的数据
++  @recipe1 %{id: "1", name: "淘米", title: "侠饭", season: "1", episode: "1", content: "洗掉米表面的淀粉", user_id: "999", url: "http://localhost"}
++  @recipe2 %{id: "2", name: "煮饭", title: "侠饭", season: "1", episode: "1", content: "浸泡", user_id: "888", url: "http://localhost"}
 @@ -28,4 +28,23 @@ defmodule TvRecipe.RecipeViewTest do
      end
    end
 
 +  test "render new.html", %{conn: conn} do
-+    changeset = Recipe.changeset(%Recipe{})
++    changeset = Recipe.changeset(%Recipe{}, %{})
 +    content = render_to_string(TvRecipe.RecipeView, "new.html", conn: conn, changeset: changeset)
 +    assert String.contains?(content, "url")
 +  end
 +
 +  test "render show.html", %{conn: conn} do
-+    recipe = %Recipe{id: "1", name: "淘米", title: "侠饭", season: "1", episode: "1", content: "洗掉米表面的淀粉", user_id: "999", url: "https://github.com/chenxsan/PhoenixFramework"}
++    recipe = struct(Recipe, @recipe1)
 +    content = render_to_string(TvRecipe.RecipeView, "show.html", conn: conn, recipe: recipe)
-+    assert String.contains?(content, recipe.url)
++    assert String.contains?(content, @recipe1.url)
 +  end
 +
 +  test "render edit.html", %{conn: conn} do
-+    recipe = %Recipe{id: "1", name: "淘米", title: "侠饭", season: "1", episode: "1", content: "洗掉米表面的淀粉", user_id: "999", url: "https://github.com/chenxsan/PhoenixFramework"}
-+    changeset = Recipe.changeset(recipe)
++    recipe = struct(Recipe, @recipe1)
++    changeset = Recipe.changeset(%Recipe{}, @recipe1)
 +    content = render_to_string(TvRecipe.RecipeView, "edit.html", conn: conn, changeset: changeset, recipe: recipe)
-+    assert String.contains?(content, recipe.url)
++    assert String.contains?(content, @recipe1.url)
 +  end
 +
  end

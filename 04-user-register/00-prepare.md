@@ -42,32 +42,35 @@
 
 但这样的手动添加过程太麻烦，还容易出错，应该有便捷的方法。
 
-是的，Phoenix 提供了一系列的 mix 工具包。我们要接触的这个是 [`mix phoenix.gen.html`](https://hexdocs.pm/phoenix/Mix.Tasks.Phoenix.Gen.Html.html)。
+是的，Phoenix 提供了一系列的 mix 工具包。我们要接触的这个是 [`mix phx.gen.html`](https://hexdocs.pm/phoenix/Mix.Tasks.Phoenix.Gen.Html.html)。
 
-请在命令行窗口下切换到 `tv_recipe` 目录，然后执行 `mix phoenix.gen.html` 命令：
+请在命令行窗口下切换到 `tv_recipe` 目录，然后执行 `mix phx.gen.html` 命令：
 
 ```
 $ cd tv_recipe
-$ mix phoenix.gen.html User users username:string:unique email:string:unique password:string
+$ mix phx.gen.html Users User users username:string:unique email:string:unique password:string
 ```
-![mix phoenix.gen.html 命令](/img/02-mix-phoenix.gen.html.png)
+![mix phx.gen.html 命令](/img/02-mix-phoenix.gen.html.png)
 
 执行命令后的输出如下：
 
 ```bash
-* creating web/controllers/user_controller.ex
-* creating web/templates/user/edit.html.eex
-* creating web/templates/user/form.html.eex
-* creating web/templates/user/index.html.eex
-* creating web/templates/user/new.html.eex
-* creating web/templates/user/show.html.eex
-* creating web/views/user_view.ex
-* creating test/controllers/user_controller_test.exs
-* creating web/models/user.ex
-* creating test/models/user_test.exs
+* creating lib/tv_recipe_web/controllers/user_controller.ex
+* creating lib/tv_recipe_web/templates/user/edit.html.eex
+* creating lib/tv_recipe_web/templates/user/form.html.eex
+* creating lib/tv_recipe_web/templates/user/index.html.eex
+* creating lib/tv_recipe_web/templates/user/new.html.eex
+* creating lib/tv_recipe_web/templates/user/show.html.eex
+* creating lib/tv_recipe_web/views/user_view.ex
+* creating test/lib/tv_recipe_web/controllers/user_controller_test.exs
+* creating lib/tv_recipe/users/user.ex
 * creating priv/repo/migrations/20170123145857_create_user.exs
+* creating lib/tv_recipe/users.ex
+* injecting lib/tv_recipe/users.ex
+* creating test/lib/tv_recipe/users_test.exs
+* injecting test/tv_recipe/users_test.exs
 
-Add the resource to your browser scope in web/router.ex:
+Add the resource to your browser scope in lib/tv_recipe_web/router.ex:
 
     resources "/users", UserController
 
@@ -122,13 +125,13 @@ Generated tv_recipe app
 11:08:12.067 [info]  == Migrated in 0.0s
 ```
 
-操作完上述两步后，因为某些编辑器可能导致的代码重载问题，你需要重启 Phoenix 服务器 - 按两次 Ctrl-C，然后重新执行 `mix phoenix.server`。
+操作完上述两步后，因为某些编辑器可能导致的代码重载问题，你需要重启 Phoenix 服务器 - 按两次 Ctrl-C，然后重新执行 `mix phx.server`。
 
 之后在浏览器中打开网址 `http://localhost:4000/users/new`：
 
 ![创建用户页面截图](/img/04-users-new-page.png)
 
-有了。是不是很惊讶？我们用 `mix phoenix.gen.html` 命令生成的样板，功能已经很完善：增删改查功能全都有了。我们需要的，只是在样板基础上做点修改。
+有了。是不是很惊讶？我们用 `mix phx.gen.html` 命令生成的样板，功能已经很完善：增删改查功能全都有了。我们需要的，只是在样板基础上做点修改。
 
 [接下来](/04-user-register/01-username-required.md)几章，我们将一步步完成本章开头列出的限制条件。
 
