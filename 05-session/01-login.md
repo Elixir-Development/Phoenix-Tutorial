@@ -1,6 +1,6 @@
 # 登录
 
-这一次，我们没有 `mix phoenix.gen.html` 可以用，所以要一步一步写了。
+这一次，我们没有 `mix phx.gen.html` 可以用，所以要一步一步写了。
 
 它的过程，跟[添加帮助文件一章](/02-explore-phoenix/02-explore-phoenix.md)一样。
 
@@ -10,11 +10,11 @@ Don't panic，错误是指引我们成功的路灯。
 
 ## 添加路由
 
-首先在 `test/controllers` 目录下新建一个 `session_controller_test.exs` 文件：
+首先在 `test/tv_recipe_web/controllers` 目录下新建一个 `session_controller_test.exs` 文件：
 
 ```elixir
-defmodule TvRecipe.SessionControllerTest do
-  use TvRecipe.ConnCase
+defmodule TvRecipeWeb.SessionControllerTest do
+  use TvRecipeWeb.ConnCase
 end
 ```
 
@@ -22,7 +22,7 @@ end
 
 ```elixir
   test "renders form for new sessions", %{conn: conn} do
-    conn = get conn, session_path(conn, :new)
+    conn = get conn, Routes.session_path(conn, :new)
     # 200 响应，页面上带有“登录”
     assert html_response(conn, 200) =~ "登录"
   end
@@ -30,8 +30,8 @@ end
 运行测试，结果如下：
 
 ```bash
-$ mix test test/controllers/session_controller_test.exs
-** (CompileError) test/controllers/session_controller_test.exs:5: undefined function session_path/2
+$ mix test test/tv_recipe_web/controllers/session_controller_test.exs
+** (CompileError) test/tv_recipe_web/controllers/session_controller_test.exs:5: undefined function session_path/2
     (stdlib) lists.erl:1338: :lists.foreach/2
     (stdlib) erl_eval.erl:670: :erl_eval.do_apply/6
     (elixir) lib/code.ex:370: Code.require_file/2
@@ -62,10 +62,10 @@ get "/", PageController, :index
 我们回头去看控制器的代码，会在开头处看到这么一行：
 
 ```elixir
-use TvRecipe.Web, :controller
+use TvRecipeWeb, :controller
 ```
 
-而 `TvRecipe.Web` 是定义在 `web/web.ex` 文件，其中会有这样的内容：
+而 `TvRecipeWeb` 是定义在 `tv_recipe_web/tv_recipe_web.ex` 文件，其中会有这样的内容：
 
 ```elixir
   def controller do
@@ -81,17 +81,17 @@ use TvRecipe.Web, :controller
     end
   end
   ```
-我们看到了 `import TvRecipe.Router.Helpers` 一行，这正是我们在控制器中可以直接使用 `user_path` 等函数的原因 - `use TvRecipe.Web, :controller` 做了准备工作。
+我们看到了 `import TvRecipe.Router.Helpers` 一行，这正是我们在控制器中可以直接使用 `user_path` 等函数的原因 - `use TvRecipeWeb, :controller` 做了准备工作。
 
 现在，我们知道要怎么定义 `session_path` 了。
 
 打开 `router.ex` 文件，添加一个新路由：
 
 ```elixir
-diff --git a/web/router.ex b/web/router.ex
+diff --git a/lib/tv_recipe_web/router.ex b/lib/tv_recipe_web/router.ex
 index 4ddc1cc..aac327c 100644
---- a/web/router.ex
-+++ b/web/router.ex
+--- a/lib/tv_recipe_web/router.ex
++++ b/lib/tv_recipe_web/router.ex
 @@ -18,6 +18,7 @@ defmodule TvRecipe.Router do
 
      get "/", PageController, :index
@@ -102,23 +102,23 @@ index 4ddc1cc..aac327c 100644
 运行测试：
 
 ```bash
-mix test test/controllers/session_controller_test.exs
+mix test test/tv_recipe_web/controllers/session_controller_test.exs
 Compiling 8 files (.ex)
 
 
-  1) test renders form for new sessions (TvRecipe.SessionControllerTest)
-     test/controllers/session_controller_test.exs:4
-     ** (UndefinedFunctionError) function TvRecipe.SessionController.init/1 is undefined (module TvRecipe.SessionController
+  1) test renders form for new sessions (TvRecipeWeb.SessionControllerTest)
+     test/tv_recipe_web/controllers/session_controller_test.exs:4
+     ** (UndefinedFunctionError) function TvRecipeWeb.SessionController.init/1 is undefined (module TvRecipeWeb.SessionController
 is not available)
      stacktrace:
-       TvRecipe.SessionController.init(:new)
-       (tv_recipe) web/router.ex:1: anonymous fn/1 in TvRecipe.Router.match_route/4
+       TvRecipeWeb.SessionController.init(:new)
+       (tv_recipe) lib/tv_recipe_web/router.ex:1: anonymous fn/1 in TvRecipe.Router.match_route/4
        (tv_recipe) lib/phoenix/router.ex:261: TvRecipe.Router.dispatch/2
-       (tv_recipe) web/router.ex:1: TvRecipe.Router.do_call/2
+       (tv_recipe) lib/tv_recipe_web/router.ex:1: TvRecipe.Router.do_call/2
        (tv_recipe) lib/tv_recipe/endpoint.ex:1: TvRecipe.Endpoint.phoenix_pipeline/1
        (tv_recipe) lib/tv_recipe/endpoint.ex:1: TvRecipe.Endpoint.call/2
        (phoenix) lib/phoenix/test/conn_test.ex:224: Phoenix.ConnTest.dispatch/5
-       test/controllers/session_controller_test.exs:5: (test)
+       test/tv_recipe_web/controllers/session_controller_test.exs:5: (test)
 
 
 
@@ -133,8 +133,8 @@ Finished in 0.08 seconds
 在 `web/controllers` 目录下新建一个 `session_controller.ex` 文件，内容如下：
 
 ```elixir
-defmodule TvRecipe.SessionController do
-  use TvRecipe.Web, :controller
+defmodule TvRecipeWeb.SessionController do
+  use TvRecipeWeb, :controller
 
   def new(conn, _params) do
     render conn, "new.html"
@@ -146,58 +146,58 @@ end
 现在运行测试：
 
 ```bash
-mix test test/controllers/session_controller_test.exs
+mix test test/tv_recipe_web/controllers/session_controller_test.exs
 Compiling 1 file (.ex)
 Generated tv_recipe app
 
 
-  1) test renders form for new sessions (TvRecipe.SessionControllerTest)
-     test/controllers/session_controller_test.exs:4
-     ** (UndefinedFunctionError) function TvRecipe.SessionView.render/2 is undefined (module TvRecipe.SessionView is not ava
+  1) test renders form for new sessions (TvRecipeWeb.SessionControllerTest)
+     test/tv_recipe_web/controllers/session_controller_test.exs:4
+     ** (UndefinedFunctionError) function TvRecipeWeb.SessionView.render/2 is undefined (module TvRecipeWeb.SessionView is not ava
 ilable)
      stacktrace:
-       TvRecipe.SessionView.render("new.html", %{conn: %Plug.Conn{adapter: {Plug.Adapters.Test.Conn, :...}, assigns: %{layou
+       TvRecipeWeb.SessionView.render("new.html", %{conn: %Plug.Conn{adapter: {Plug.Adapters.Test.Conn, :...}, assigns: %{layou
 t: {TvRecipe.LayoutView, "app.html"}}, before_send: [#Function<0.101282891/1 in Plug.CSRFProtection.call/2>, #Function<4.111
 648917/1 in Phoenix.Controller.fetch_flash/2>, #Function<0.61377594/1 in Plug.Session.before_send/2>, #Function<1.115972179/
 1 in Plug.Logger.call/2>], body_params: %{}, cookies: %{}, halted: false, host: "www.example.com", method: "GET", owner: #PI
 D<0.302.0>, params: %{}, path_info: ["sessions", "new"], path_params: %{}, peer: {{127, 0, 0, 1}, 111317}, port: 80, private
-: %{TvRecipe.Router => {[], %{}}, :phoenix_action => :new, :phoenix_controller => TvRecipe.SessionController, :phoenix_endpo
+: %{TvRecipe.Router => {[], %{}}, :phoenix_action => :new, :phoenix_controller => TvRecipeWeb.SessionController, :phoenix_endpo
 int => TvRecipe.Endpoint, :phoenix_flash => %{}, :phoenix_format => "html", :phoenix_layout => {TvRecipe.LayoutView, :app},
 :phoenix_pipelines => [:browser], :phoenix_recycled => true, :phoenix_route => #Function<12.75217690/1 in TvRecipe.Router.ma
-tch_route/4>, :phoenix_router => TvRecipe.Router, :phoenix_template => "new.html", :phoenix_view => TvRecipe.SessionView, :p
+tch_route/4>, :phoenix_router => TvRecipe.Router, :phoenix_template => "new.html", :phoenix_view => TvRecipeWeb.SessionView, :p
 lug_session => %{}, :plug_session_fetch => :done, :plug_skip_csrf_protection => true}, query_params: %{}, query_string: "",
 remote_ip: {127, 0, 0, 1}, req_cookies: %{}, req_headers: [], request_path: "/sessions/new", resp_body: nil, resp_cookies: %
 {}, resp_headers: [{"cache-control", "max-age=0, private, must-revalidate"}, {"x-request-id", "eedn739jkdct1hr8r3nod6nst95b2
 qvu"}, {"x-frame-options", "SAMEORIGIN"}, {"x-xss-protection", "1; mode=block"}, {"x-content-type-options", "nosniff"}], sch
 eme: :http, script_name: [], secret_key_base: "XfacEiZ/QVO87L4qirM0thXcedgcx5zYhLPAsmVPnL8AVu6qB/Et84yvJ6712aSn", state: :un
-set, status: nil}, view_module: TvRecipe.SessionView, view_template: "new.html"})
+set, status: nil}, view_module: TvRecipeWeb.SessionView, view_template: "new.html"})
        (tv_recipe) web/templates/layout/app.html.eex:29: TvRecipe.LayoutView."app.html"/1
        (phoenix) lib/phoenix/view.ex:335: Phoenix.View.render_to_iodata/3
        (phoenix) lib/phoenix/controller.ex:642: Phoenix.Controller.do_render/4
-       (tv_recipe) web/controllers/session_controller.ex:1: TvRecipe.SessionController.action/2
-       (tv_recipe) web/controllers/session_controller.ex:1: TvRecipe.SessionController.phoenix_controller_pipeline/2
+       (tv_recipe) web/controllers/session_controller.ex:1: TvRecipeWeb.SessionController.action/2
+       (tv_recipe) web/controllers/session_controller.ex:1: TvRecipeWeb.SessionController.phoenix_controller_pipeline/2
        (tv_recipe) lib/tv_recipe/endpoint.ex:1: TvRecipe.Endpoint.instrument/4
        (tv_recipe) lib/phoenix/router.ex:261: TvRecipe.Router.dispatch/2
-       (tv_recipe) web/router.ex:1: TvRecipe.Router.do_call/2
+       (tv_recipe) lib/tv_recipe_web/router.ex:1: TvRecipe.Router.do_call/2
        (tv_recipe) lib/tv_recipe/endpoint.ex:1: TvRecipe.Endpoint.phoenix_pipeline/1
        (tv_recipe) lib/tv_recipe/endpoint.ex:1: TvRecipe.Endpoint.call/2
        (phoenix) lib/phoenix/test/conn_test.ex:224: Phoenix.ConnTest.dispatch/5
-       test/controllers/session_controller_test.exs:5: (test)
+       test/tv_recipe_web/controllers/session_controller_test.exs:5: (test)
 
 
 
 Finished in 0.1 seconds
 1 test, 1 failure
 ```
-测试失败，因为 `TvRecipe.SessionView` 未定义。
+测试失败，因为 `TvRecipeWeb.SessionView` 未定义。
 
 ## 创建 `SessionView` 模块
 
 在 `web/views` 目录下新建一个 `session_view.ex` 文件，内容如下：
 
 ```elixir
-defmodule TvRecipe.SessionView do
-  use TvRecipe.Web, :view
+defmodule TvRecipeWeb.SessionView do
+  use TvRecipeWeb, :view
 end
 ```
 在 Phoenix 下，View 与 templates 是分开的，其中 View 是模块（module），而 templates 在编译后，会变成 View 模块中的函数。这也是为什么我们在定义模板之前，要先定义视图的原因。
@@ -205,14 +205,14 @@ end
 此时运行测试：
 
 ```bash
-mix test test/controllers/session_controller_test.exs
+mix test test/tv_recipe_web/controllers/session_controller_test.exs
 Compiling 1 file (.ex)
 Generated tv_recipe app
 
 
-  1) test renders form for new sessions (TvRecipe.SessionControllerTest)
-     test/controllers/session_controller_test.exs:4
-     ** (Phoenix.Template.UndefinedError) Could not render "new.html" for TvRecipe.SessionView, please define a matching cla
+  1) test renders form for new sessions (TvRecipeWeb.SessionControllerTest)
+     test/tv_recipe_web/controllers/session_controller_test.exs:4
+     ** (Phoenix.Template.UndefinedError) Could not render "new.html" for TvRecipeWeb.SessionView, please define a matching cla
 use for render/2 or define a template at "web/templates/session". No templates were compiled for this module.
      Assigns:
 
@@ -221,31 +221,31 @@ ore_send: [#Function<0.101282891/1 in Plug.CSRFProtection.call/2>, #Function<4.1
 /2>, #Function<0.61377594/1 in Plug.Session.before_send/2>, #Function<1.115972179/1 in Plug.Logger.call/2>], body_params: %{
 }, cookies: %{}, halted: false, host: "www.example.com", method: "GET", owner: #PID<0.300.0>, params: %{}, path_info: ["sess
 ions", "new"], path_params: %{}, peer: {{127, 0, 0, 1}, 111317}, port: 80, private: %{TvRecipe.Router => {[], %{}}, :phoenix
-_action => :new, :phoenix_controller => TvRecipe.SessionController, :phoenix_endpoint => TvRecipe.Endpoint, :phoenix_flash =
+_action => :new, :phoenix_controller => TvRecipeWeb.SessionController, :phoenix_endpoint => TvRecipe.Endpoint, :phoenix_flash =
 > %{}, :phoenix_format => "html", :phoenix_layout => {TvRecipe.LayoutView, :app}, :phoenix_pipelines => [:browser], :phoenix
 _recycled => true, :phoenix_route => #Function<12.75217690/1 in TvRecipe.Router.match_route/4>, :phoenix_router => TvRecipe.
-Router, :phoenix_template => "new.html", :phoenix_view => TvRecipe.SessionView, :plug_session => %{}, :plug_session_fetch =>
+Router, :phoenix_template => "new.html", :phoenix_view => TvRecipeWeb.SessionView, :plug_session => %{}, :plug_session_fetch =>
  :done, :plug_skip_csrf_protection => true}, query_params: %{}, query_string: "", remote_ip: {127, 0, 0, 1}, req_cookies: %{
 }, req_headers: [], request_path: "/sessions/new", resp_body: nil, resp_cookies: %{}, resp_headers: [{"cache-control", "max-
 age=0, private, must-revalidate"}, {"x-request-id", "vi7asqkbb9153m6ku8btf8r50p38rsqn"}, {"x-frame-options", "SAMEORIGIN"},
 {"x-xss-protection", "1; mode=block"}, {"x-content-type-options", "nosniff"}], scheme: :http, script_name: [], secret_key_ba
 se: "XfacEiZ/QVO87L4qirM0thXcedgcx5zYhLPAsmVPnL8AVu6qB/Et84yvJ6712aSn", state: :unset, status: nil}, template_not_found: TvR
-ecipe.SessionView, view_module: TvRecipe.SessionView, view_template: "new.html"}
+ecipe.SessionView, view_module: TvRecipeWeb.SessionView, view_template: "new.html"}
 
      stacktrace:
        (phoenix) lib/phoenix/template.ex:364: Phoenix.Template.raise_template_not_found/3
        (tv_recipe) web/templates/layout/app.html.eex:29: TvRecipe.LayoutView."app.html"/1
        (phoenix) lib/phoenix/view.ex:335: Phoenix.View.render_to_iodata/3
        (phoenix) lib/phoenix/controller.ex:642: Phoenix.Controller.do_render/4
-       (tv_recipe) web/controllers/session_controller.ex:1: TvRecipe.SessionController.action/2
-       (tv_recipe) web/controllers/session_controller.ex:1: TvRecipe.SessionController.phoenix_controller_pipeline/2
+       (tv_recipe) web/controllers/session_controller.ex:1: TvRecipeWeb.SessionController.action/2
+       (tv_recipe) web/controllers/session_controller.ex:1: TvRecipeWeb.SessionController.phoenix_controller_pipeline/2
        (tv_recipe) lib/tv_recipe/endpoint.ex:1: TvRecipe.Endpoint.instrument/4
        (tv_recipe) lib/phoenix/router.ex:261: TvRecipe.Router.dispatch/2
-       (tv_recipe) web/router.ex:1: TvRecipe.Router.do_call/2
+       (tv_recipe) lib/tv_recipe_web/router.ex:1: TvRecipe.Router.do_call/2
        (tv_recipe) lib/tv_recipe/endpoint.ex:1: TvRecipe.Endpoint.phoenix_pipeline/1
        (tv_recipe) lib/tv_recipe/endpoint.ex:1: TvRecipe.Endpoint.call/2
        (phoenix) lib/phoenix/test/conn_test.ex:224: Phoenix.ConnTest.dispatch/5
-       test/controllers/session_controller_test.exs:5: (test)
+       test/tv_recipe_web/controllers/session_controller_test.exs:5: (test)
 
 
 
@@ -261,12 +261,12 @@ Finished in 0.1 seconds
 现在运行测试：
 
 ```bash
-mix test test/controllers/session_controller_test.exs
+mix test test/tv_recipe_web/controllers/session_controller_test.exs
 Compiling 1 file (.ex)
 
 
-  1) test renders form for new sessions (TvRecipe.SessionControllerTest)
-     test/controllers/session_controller_test.exs:4
+  1) test renders form for new sessions (TvRecipeWeb.SessionControllerTest)
+     test/tv_recipe_web/controllers/session_controller_test.exs:4
      Assertion with =~ failed
      code:  html_response(conn, 200) =~ "登录"
      left:  "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta http-equiv=\"X-UA-Compat
@@ -280,7 +280,7 @@ hoenixframework.org/docs\">Get Started</a></li>\n          </ul>\n        </nav>
 t>\n  </body>\n</html>\n"
      right: "登录"
      stacktrace:
-       test/controllers/session_controller_test.exs:7: (test)
+       test/tv_recipe_web/controllers/session_controller_test.exs:7: (test)
 
 
 
@@ -327,12 +327,12 @@ Finished in 0.1 seconds
 但测试结果告诉我们：
 
 ```bash
-mix test test/controllers/session_controller_test.exs
+mix test test/tv_recipe_web/controllers/session_controller_test.exs
 Compiling 1 file (.ex)
 
 
-  1) test renders form for new sessions (TvRecipe.SessionControllerTest)
-     test/controllers/session_controller_test.exs:4
+  1) test renders form for new sessions (TvRecipeWeb.SessionControllerTest)
+     test/tv_recipe_web/controllers/session_controller_test.exs:4
      ** (ArgumentError) assign @changeset not available in eex template.
 
      Please make sure all proper assigns have been set. If this
@@ -368,41 +368,41 @@ index 9c1f842..1df67cc 100644
 -    </div>
 -  <% end %>
 -
-+<%= form_for @conn, session_path(@conn, :create), [as: :session], fn f -> %>
++<%= form_for @conn, Routes.session_path(@conn, :create), [as: :session], fn f -> %>
    <div class="form-group <%= if f.errors[:email], do: "has-error" %>">
      <%= label f, :email, class: "control-label" %>
      <%= text_input f, :email, class: "form-control" %>
 ```
-`session_path(@conn, :create)` 是表单数据要提交的路径，`as: :session` 则表示表单数据提交时，是保存在 `session` 的键名下的。
+`Routes.session_path(@conn, :create)` 是表单数据要提交的路径，`as: :session` 则表示表单数据提交时，是保存在 `session` 的键名下的。
 
 现在运行测试：
 
 ```bash
-mix test test/controllers/session_controller_test.exs
+mix test test/tv_recipe_web/controllers/session_controller_test.exs
 Compiling 10 files (.ex)
 
 
-  1) test renders form for new sessions (TvRecipe.SessionControllerTest)
-     test/controllers/session_controller_test.exs:4
+  1) test renders form for new sessions (TvRecipeWeb.SessionControllerTest)
+     test/tv_recipe_web/controllers/session_controller_test.exs:4
      ** (ArgumentError) No helper clause for TvRecipe.Router.Helpers.session_path/2 defined for action :create.
      The following session_path actions are defined under your router:
 
        * :new
      stacktrace:
        (phoenix) lib/phoenix/router/helpers.ex:269: Phoenix.Router.Helpers.raise_route_error/5
-       (tv_recipe) web/templates/session/new.html.eex:2: TvRecipe.SessionView."new.html"/1
+       (tv_recipe) web/templates/session/new.html.eex:2: TvRecipeWeb.SessionView."new.html"/1
        (tv_recipe) web/templates/layout/app.html.eex:29: TvRecipe.LayoutView."app.html"/1
        (phoenix) lib/phoenix/view.ex:335: Phoenix.View.render_to_iodata/3
        (phoenix) lib/phoenix/controller.ex:642: Phoenix.Controller.do_render/4
-       (tv_recipe) web/controllers/session_controller.ex:1: TvRecipe.SessionController.action/2
-       (tv_recipe) web/controllers/session_controller.ex:1: TvRecipe.SessionController.phoenix_controller_pipeline/2
+       (tv_recipe) web/controllers/session_controller.ex:1: TvRecipeWeb.SessionController.action/2
+       (tv_recipe) web/controllers/session_controller.ex:1: TvRecipeWeb.SessionController.phoenix_controller_pipeline/2
        (tv_recipe) lib/tv_recipe/endpoint.ex:1: TvRecipe.Endpoint.instrument/4
        (tv_recipe) lib/phoenix/router.ex:261: TvRecipe.Router.dispatch/2
-       (tv_recipe) web/router.ex:1: TvRecipe.Router.do_call/2
+       (tv_recipe) lib/tv_recipe_web/router.ex:1: TvRecipe.Router.do_call/2
        (tv_recipe) lib/tv_recipe/endpoint.ex:1: TvRecipe.Endpoint.phoenix_pipeline/1
        (tv_recipe) lib/tv_recipe/endpoint.ex:1: TvRecipe.Endpoint.call/2
        (phoenix) lib/phoenix/test/conn_test.ex:224: Phoenix.ConnTest.dispatch/5
-       test/controllers/session_controller_test.exs:5: (test)
+       test/tv_recipe_web/controllers/session_controller_test.exs:5: (test)
 
 
 
@@ -414,10 +414,10 @@ Finished in 0.07 seconds
 我们需要在 `router.ex` 文件添加一个路由：
 
 ```elixir
-diff --git a/web/router.ex b/web/router.ex
+diff --git a/lib/tv_recipe_web/router.ex b/lib/tv_recipe_web/router.ex
 index aac327c..e0406d2 100644
---- a/web/router.ex
-+++ b/web/router.ex
+--- a/lib/tv_recipe_web/router.ex
++++ b/lib/tv_recipe_web/router.ex
 @@ -19,6 +19,7 @@ defmodule TvRecipe.Router do
      get "/", PageController, :index
      resources "/users", UserController
@@ -434,19 +434,20 @@ index aac327c..e0406d2 100644
 如果我们此时在浏览器里访问 `/sessions/new` 页面，并提交用户登录数据，会怎样？不不不，不要在浏览器里尝试，我们用测试代码：
 
 ```elixir
-diff --git a/test/controllers/session_controller_test.exs b/test/controllers/session_controller_test.exs
+diff --git a/test/tv_recipe_web/controllers/session_controller_test.exs b/test/tv_recipe_web/controllers/session_controller_test.exs
 index 0372448..6835e40 100644
---- a/test/controllers/session_controller_test.exs
-+++ b/test/controllers/session_controller_test.exs
+--- a/test/tv_recipe_web/controllers/session_controller_test.exs
++++ b/test/tv_recipe_web/controllers/session_controller_test.exs
 @@ -1,9 +1,24 @@
- defmodule TvRecipe.SessionControllerTest do
+ defmodule TvRecipeWeb.SessionControllerTest do
    use TvRecipe.ConnCase
 
-+  alias TvRecipe.{Repo, User}
++  alias TvRecipe.Repo
++  alias TvRecipe.Users.User
 +  @valid_user_attrs %{email: "chenxsan@gmail.com", username: "chenxsan", password: String.duplicate("a", 6)}
 +
    test "renders form for new sessions", %{conn: conn} do
-     conn = get conn, session_path(conn, :new)
+     conn = get conn, Routes.session_path(conn, :new)
      # 200 响应，页面上带有“登录”
      assert html_response(conn, 200) =~ "登录"
    end
@@ -456,29 +457,29 @@ index 0372448..6835e40 100644
 +    # 插入新用户
 +    Repo.insert! user_changeset
 +    # 用户登录
-+    conn = post conn, session_path(conn, :create), session: @valid_user_attrs
++    conn = post conn, Routes.session_path(conn, :create), session: @valid_user_attrs
 +    # 显示“欢迎你”的消息
 +    assert get_flash(conn, :info) == "欢迎你"
 +    # 重定向到主页
-+    assert redirected_to(conn) == page_path(conn, :index)
++    assert redirected_to(conn) == Routes.page_path(conn, :index)
 +  end
  end
 ```
 我们的测试结果是：
 
 ```bash
-$ mix test test/controllers/session_controller_test.exs
+$ mix test test/tv_recipe_web/controllers/session_controller_test.exs
 Compiling 1 file (.ex)
 warning: variable "user" is unused
-  test/controllers/session_controller_test.exs:16
+  test/tv_recipe_web/controllers/session_controller_test.exs:16
 
 .
 
-  1) test login user and redirect to home page when data is valid (TvRecipe.SessionControllerTest)
-     test/controllers/session_controller_test.exs:13
-     ** (UndefinedFunctionError) function TvRecipe.SessionController.create/2 is undefined or private
+  1) test login user and redirect to home page when data is valid (TvRecipeWeb.SessionControllerTest)
+     test/tv_recipe_web/controllers/session_controller_test.exs:13
+     ** (UndefinedFunctionError) function TvRecipeWeb.SessionController.create/2 is undefined or private
      ```
-`TvRecipe.SessionController.create` 未定义。
+`TvRecipeWeb.SessionController.create` 未定义。
 
 打开 `session_controller.ex` 文件，添加 `create` 动作：
 
@@ -488,9 +489,10 @@ index 66a5304..40ad02f 100644
 --- a/web/controllers/session_controller.ex
 +++ b/web/controllers/session_controller.ex
 @@ -1,7 +1,20 @@
- defmodule TvRecipe.SessionController do
-   use TvRecipe.Web, :controller
-+  alias TvRecipe.{Repo, User}
+ defmodule TvRecipeWeb.SessionController do
+   use TvRecipeWeb, :controller
++  alias TvRecipe.Repo
++  alias TvRecipe.Users.User
 
    def new(conn, _params) do
      render conn, "new.html"
@@ -504,7 +506,7 @@ index 66a5304..40ad02f 100644
 +      user && Comeonin.Bcrypt.checkpw(password, user.password_hash) ->
 +        conn
 +        |> put_flash(:info, "欢迎你")
-+        |> redirect(to: page_path(conn, :index))
++        |> redirect(to: Routes.page_path(conn, :index))
 +    end
 +  end
  end
@@ -520,7 +522,7 @@ index 66a5304..40ad02f 100644
 现在运行测试：
 
 ```bash
-$ mix test test/controllers/session_controller_test.exs
+$ mix test test/tv_recipe_web/controllers/session_controller_test.exs
 ..
 
 Finished in 0.2 seconds
@@ -536,13 +538,13 @@ Finished in 0.2 seconds
 同样的，我们先写测试：
 
 ```elixir
-diff --git a/test/controllers/session_controller_test.exs b/test/controllers/session_controller_test.exs
+diff --git a/test/tv_recipe_web/controllers/session_controller_test.exs b/test/tv_recipe_web/controllers/session_controller_test.exs
 index cc35f0a..dd5bc02 100644
---- a/test/controllers/session_controller_test.exs
-+++ b/test/controllers/session_controller_test.exs
-@@ -21,4 +21,24 @@ defmodule TvRecipe.SessionControllerTest do
+--- a/test/tv_recipe_web/controllers/session_controller_test.exs
++++ b/test/tv_recipe_web/controllers/session_controller_test.exs
+@@ -21,4 +21,24 @@ defmodule TvRecipeWeb.SessionControllerTest do
      # 重定向到主页
-     assert redirected_to(conn) == page_path(conn, :index)
+     assert redirected_to(conn) == Routes.page_path(conn, :index)
    end
 +
 +  test "redirect to session new when email exists but with wrong password", %{conn: conn} do
@@ -550,7 +552,7 @@ index cc35f0a..dd5bc02 100644
 +    # 插入新用户
 +    Repo.insert! user_changeset
 +    # 用户登录
-+    conn = post conn, session_path(conn, :create), session: %{@valid_user_attrs | password: ""}
++    conn = post conn, Routes.session_path(conn, :create), session: %{@valid_user_attrs | password: ""}
 +    # 显示“用户名或密码错误”
 +    assert get_flash(conn, :error) == "用户名或密码错误"
 +    # 返回登录页
@@ -558,7 +560,7 @@ index cc35f0a..dd5bc02 100644
 +  end
 +
 +  test "redirect to session new when nobody login", %{conn: conn} do
-+    conn = post conn, session_path(conn, :create), session: @valid_user_attrs
++    conn = post conn, Routes.session_path(conn, :create), session: @valid_user_attrs
 +    # 显示“用户名或密码错误”
 +    assert get_flash(conn, :error) == "用户名或密码错误"
 +    # 返回登录页
@@ -573,10 +575,10 @@ diff --git a/web/controllers/session_controller.ex b/web/controllers/session_con
 index 40ad02f..400a33c 100644
 --- a/web/controllers/session_controller.ex
 +++ b/web/controllers/session_controller.ex
-@@ -15,6 +15,18 @@ defmodule TvRecipe.SessionController do
+@@ -15,6 +15,18 @@ defmodule TvRecipeWeb.SessionController do
          conn
          |> put_flash(:info, "欢迎你")
-         |> redirect(to: page_path(conn, :index))
+         |> redirect(to: Routes.page_path(conn, :index))
 +      # 用户存在，但密码错误
 +      user ->
 +        conn
@@ -596,7 +598,7 @@ index 40ad02f..400a33c 100644
 再次测试：
 
 ```bash
-mix test test/controllers/session_controller_test.exs
+mix test test/tv_recipe_web/controllers/session_controller_test.exs
 ....
 
 Finished in 0.2 seconds
@@ -615,27 +617,27 @@ Finished in 0.2 seconds
 我们来改造下我们的测试代码：
 
 ```elixir
-diff --git a/test/controllers/session_controller_test.exs b/test/controllers/session_controller_test.exs
+diff --git a/test/tv_recipe_web/controllers/session_controller_test.exs b/test/tv_recipe_web/controllers/session_controller_test.exs
 index dd5bc02..52e8801 100644
---- a/test/controllers/session_controller_test.exs
-+++ b/test/controllers/session_controller_test.exs
-@@ -13,13 +13,19 @@ defmodule TvRecipe.SessionControllerTest do
+--- a/test/tv_recipe_web/controllers/session_controller_test.exs
++++ b/test/tv_recipe_web/controllers/session_controller_test.exs
+@@ -13,13 +13,19 @@ defmodule TvRecipeWeb.SessionControllerTest do
    test "login user and redirect to home page when data is valid", %{conn: conn} do
      user_changeset = User.changeset(%User{}, @valid_user_attrs)
      # 插入新用户
 -    Repo.insert! user_changeset
 +    user = Repo.insert! user_changeset
      # 用户登录
-     conn = post conn, session_path(conn, :create), session: @valid_user_attrs
+     conn = post conn, Routes.session_path(conn, :create), session: @valid_user_attrs
      # 显示“欢迎你”的消息
      assert get_flash(conn, :info) == "欢迎你"
      # 重定向到主页
-     assert redirected_to(conn) == page_path(conn, :index)
+     assert redirected_to(conn) == Routes.page_path(conn, :index)
 +    # 读取首页，页面上包含已登录用户的用户名
-+    conn = get conn, page_path(conn, :index)
++    conn = get conn, Routes.page_path(conn, :index)
 +    assert html_response(conn, 200) =~ Map.get(@valid_user_attrs, :username)
 +    # 读取用户页，页面上包含已登录用户的用户名
-+    conn = get conn, user_path(conn, :show, user)
++    conn = get conn, Routes.user_path(conn, :show, user)
 +    assert html_response(conn, 200) =~ Map.get(@valid_user_attrs, :username)
    end
 ```
@@ -660,7 +662,7 @@ index 82259d8..2d39904 100644
            <ul class="nav nav-pills pull-right">
              <li><a href="http://www.phoenixframework.org/docs">Get Started</a></li>
 +            <%= if @current_user do %>
-+              <li><%= link @current_user.username, to: user_path(@conn, :show, @current_user) %></li>
++              <li><%= link @current_user.username, to: Routes.user_path(@conn, :show, @current_user) %></li>
 +            <% end %>
            </ul>
          </nav>
@@ -733,7 +735,7 @@ index 0000000..84b17f7
 --- /dev/null
 +++ b/web/controllers/auth.ex
 @@ -0,0 +1,16 @@
-+defmodule TvRecipe.Auth do
++defmodule TvRecipeWeb.Auth do
 +  import Plug.Conn
 +
 +  @doc """
@@ -763,7 +765,7 @@ index 0000000..84b17f7
       user && Comeonin.Bcrypt.checkpw(password, user.password_hash) ->
         conn
         |> put_flash(:info, "欢迎你")
-        |> redirect(to: page_path(conn, :index))
+        |> redirect(to: Routes.page_path(conn, :index))
 ```
 
 用户登录时，我们根据他们提供的邮箱取得数据库中的用户，然后比对密码，如果密码正确，我们就得到了 `user`。
@@ -779,13 +781,13 @@ diff --git a/web/controllers/session_controller.ex b/web/controllers/session_con
 index 400a33c..b5218f2 100644
 --- a/web/controllers/session_controller.ex
 +++ b/web/controllers/session_controller.ex
-@@ -13,6 +13,7 @@ defmodule TvRecipe.SessionController do
+@@ -13,6 +13,7 @@ defmodule TvRecipeWeb.SessionController do
        # 用户存在，且密码正确
        user && Comeonin.Bcrypt.checkpw(password, user.password_hash) ->
          conn
 +        |> put_session(:user_id, user.id)
          |> put_flash(:info, "欢迎你")
-         |> redirect(to: page_path(conn, :index))
+         |> redirect(to: Routes.page_path(conn, :index))
 ```
 然后我们就能在 `auth.ex` 文件中读取 session 中的 `:user_id` 了：
 
@@ -799,22 +801,22 @@ index 84b17f7..994112d 100644
 
    def call(conn, repo) do
 +    user_id = get_session(conn, :user_id)
-+    user = user_id && repo.get(TvRecipe.User, user_id)
++    user = user_id && repo.get(TvRecipe.Users.User, user_id)
      assign(conn, :current_user, user)
    end
 ```
 最后，将 `Auth` plug 加入 `:browser` pipeline 中：
 
 ```elixir
-diff --git a/web/router.ex b/web/router.ex
+diff --git a/lib/tv_recipe_web/router.ex b/lib/tv_recipe_web/router.ex
 index e0406d2..1265c86 100644
---- a/web/router.ex
-+++ b/web/router.ex
-@@ -7,6 +7,7 @@ defmodule TvRecipe.Router do
+--- a/lib/tv_recipe_web/router.ex
++++ b/lib/tv_recipe_web/router.ex
+@@ -7,6 +7,7 @@ defmodule TvRecipeWeb.Router do
      plug :fetch_flash
      plug :protect_from_forgery
      plug :put_secure_browser_headers
-+    plug TvRecipe.Auth, repo: TvRecipe.Repo
++    plug TvRecipeWeb.Auth, repo: TvRecipe.Repo
    end
 
    pipeline :api do

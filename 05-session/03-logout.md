@@ -11,7 +11,7 @@ index c5f4616..511d0ab 100644
 +++ b/test/controllers/session_controller_test.exs
 @@ -26,6 +26,8 @@ defmodule TvRecipe.SessionControllerTest do
      # 读取用户页，页面上包含已登录用户的用户名
-     conn = get conn, user_path(conn, :show, user)
+     conn = get conn, Routes.user_path(conn, :show, user)
      assert html_response(conn, 200) =~ Map.get(@valid_user_attrs, :username)
 +    # 登录后的页面显示“退出”
 +    assert html_response(conn, 200) =~ "退出"
@@ -52,7 +52,7 @@ index 2d39904..6c87a08 100644
              <li><a href="http://www.phoenixframework.org/docs">Get Started</a></li>
              <%= if @current_user do %>
                <li><%= link @current_user.username, to: user_path(@conn, :show, @current_user) %></li>
-+              <li><%= link "退出", to: session_path(@conn, :delete, @current_user), method: "delete" %></li>
++              <li><%= link "退出", to: Routes.session_path(@conn, :delete, @current_user), method: "delete" %></li>
              <% end %>
            </ul>
          </nav>
@@ -135,12 +135,12 @@ index 511d0ab..969662a 100644
 +   user = Repo.insert!(changeset)
 +
 +    # 登录该用户
-+   conn = post conn, session_path(conn, :create), session: Map.delete(@valid_user_attrs, :username)
++   conn = post conn, Routes.session_path(conn, :create), session: Map.delete(@valid_user_attrs, :username)
 +
 +    # 点击退出
-+   conn = delete conn, session_path(conn, :delete, user)
++   conn = delete conn, Routes.session_path(conn, :delete, user)
 +   assert get_flash(conn, :info) == "退出成功"
-+   assert redirected_to(conn) == page_path(conn, :index)
++   assert redirected_to(conn) == Routes.page_path(conn, :index)
 + end
 +
  end
@@ -161,7 +161,7 @@ index b5218f2..2a887ee 100644
 +    conn
 +    |> delete_session(:user_id)
 +    |> put_flash(:info, "退出成功")
-+    |> redirect(to: page_path(conn, :index))
++    |> redirect(to: Routes.page_path(conn, :index))
 +  end
  end
 

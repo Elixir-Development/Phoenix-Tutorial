@@ -28,10 +28,10 @@ Phoenix 生成的 `form.html.eex` 模板里使用了 Bootstrap [样式](https://
 但模板中生成的样式与 Bootstrap 的比，差了 `has-error` 这样的 CSS 状态类。我们可以给它补上：
 
 ```eex
-diff --git a/web/templates/user/form.html.eex b/web/templates/user/form.html.eex
+diff --git a/lib/tv_recipe_web/templates/user/form.html.eex b/lib/tv_recipe_web/templates/user/form.html.eex
 index 5857c33..b047466 100644
---- a/web/templates/user/form.html.eex
-+++ b/web/templates/user/form.html.eex
+--- a/lib/tv_recipe_web/templates/user/form.html.eex
++++ b/lib/tv_recipe_web/templates/user/form.html.eex
 @@ -5,19 +5,19 @@
      </div>
    <% end %>
@@ -79,30 +79,30 @@ index 5857c33..b047466 100644
 
 ## 控制器的测试
 
-你可能对 `mix test test/models/user_test.exs` 命令已经烂熟于心。但 `mix test test/controllers/user_controller_test.exs` 呢？
+你可能对 `mix test test/tv_recipe/users_test.exs` 命令已经烂熟于心。但 `mix test test/tv_recipe_web/controllers/user_controller_test.exs` 呢？
 
-我们在生成用户的样板文件时，曾经生成过一个 `user_controller_test.exs` 文件，让我们运行下 `mix test test/controllers/user_controller_test.exs` 看看结果：
+我们在生成用户的样板文件时，曾经生成过一个 `user_controller_test.exs` 文件，让我们运行下 `mix test test/tv_recipe_web/controllers/user_controller_test.exs` 看看结果：
 
 ```bash
-$ mix test test/controllers/user_controller_test.exs
+$ mix test test/tv_recipe_web/controllers/user_controller_test.exs
 Compiling 1 file (.ex)
 ....
 
   1) test updates chosen resource and redirects when data is valid (TvRecipe.UserControllerTest)
-     test/controllers/user_controller_test.exs:47
+     test/tv_recipe_web/controllers/user_controller_test.exs:47
      ** (RuntimeError) expected redirection with status 302, got: 200
      stacktrace:
        (phoenix) lib/phoenix/test/conn_test.ex:443: Phoenix.ConnTest.redirected_to/2
-       test/controllers/user_controller_test.exs:50: (test)
+       test/tv_recipe_web/controllers/user_controller_test.exs:50: (test)
 
 ....
 
   2) test creates resource and redirects when data is valid (TvRecipe.UserControllerTest)
-     test/controllers/user_controller_test.exs:18
+     test/tv_recipe_web/controllers/user_controller_test.exs:18
      ** (RuntimeError) expected redirection with status 302, got: 200
      stacktrace:
        (phoenix) lib/phoenix/test/conn_test.ex:443: Phoenix.ConnTest.redirected_to/2
-       test/controllers/user_controller_test.exs:20: (test)
+       test/tv_recipe_web/controllers/user_controller_test.exs:20: (test)
 
 
 
@@ -114,10 +114,10 @@ Finished in 0.3 seconds
 显然，从模板文件到现在，我们的代码已经变化，现在测试文件一样需要根据实际情况做调整：
 
 ```elixir
-diff --git a/test/controllers/user_controller_test.exs b/test/controllers/user_controller_test.exs
+diff --git a/test/tv_recipe_web/controllers/user_controller_test.exs b/test/tv_recipe_web/controllers/user_controller_test.exs
 index 2e08483..95d3108 100644
---- a/test/controllers/user_controller_test.exs
-+++ b/test/controllers/user_controller_test.exs
+--- a/test/tv_recipe_web/controllers/user_controller_test.exs
++++ b/test/tv_recipe_web/controllers/user_controller_test.exs
 @@ -2,7 +2,7 @@ defmodule TvRecipe.UserControllerTest do
    use TvRecipe.ConnCase
 
@@ -129,8 +129,8 @@ index 2e08483..95d3108 100644
    test "lists all entries on index", %{conn: conn} do
 @@ -18,7 +18,7 @@ defmodule TvRecipe.UserControllerTest do
    test "creates resource and redirects when data is valid", %{conn: conn} do
-     conn = post conn, user_path(conn, :create), user: @valid_attrs
-     assert redirected_to(conn) == user_path(conn, :index)
+     conn = post conn, Routes.user_path(conn, :create), user: @valid_attrs
+     assert redirected_to(conn) == Routes.user_path(conn, :index)
 -    assert Repo.get_by(User, @valid_attrs)
 +    assert Repo.get_by(User, @valid_attrs |> Map.delete(:password))
    end
@@ -138,8 +138,8 @@ index 2e08483..95d3108 100644
    test "does not create resource and renders errors when data is invalid", %{conn: conn} do
 @@ -48,7 +48,7 @@ defmodule TvRecipe.UserControllerTest do
      user = Repo.insert! %User{}
-     conn = put conn, user_path(conn, :update, user), user: @valid_attrs
-     assert redirected_to(conn) == user_path(conn, :show, user)
+     conn = put conn, Routes.user_path(conn, :update, user), user: @valid_attrs
+     assert redirected_to(conn) == Routes.user_path(conn, :show, user)
 -    assert Repo.get_by(User, @valid_attrs)
 +    assert Repo.get_by(User, @valid_attrs |> Map.delete(:password))
    end

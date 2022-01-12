@@ -11,21 +11,21 @@ diff --git a/test/controllers/user_controller_test.exs b/test/controllers/user_c
 index 26055e3..ac6894e 100644
 --- a/test/controllers/user_controller_test.exs
 +++ b/test/controllers/user_controller_test.exs
-@@ -66,4 +66,18 @@ defmodule TvRecipe.UserControllerTest do
-     assert redirected_to(conn) == user_path(conn, :index)
+@@ -66,4 +66,18 @@ defmodule TvRecipeWeb.UserControllerTest do
+     assert redirected_to(conn) == Routes.user_path(conn, :index)
      refute Repo.get(User, user.id)
    end
 +
 +  test "guest access user action redirected to login page", %{conn: conn} do
 +    user = Repo.insert! %User{}
 +    Enum.each([
-+      get(conn, user_path(conn, :index)),
-+      get(conn, user_path(conn, :show, user)),
-+      get(conn, user_path(conn, :edit, user)),
-+      put(conn, user_path(conn, :update, user), user: %{}),
-+      delete(conn, user_path(conn, :delete, user))
++      get(conn, Routes.user_path(conn, :index)),
++      get(conn, Routes.user_path(conn, :show, user)),
++      get(conn, Routes.user_path(conn, :edit, user)),
++      put(conn, Routes.user_path(conn, :update, user), user: %{}),
++      delete(conn, Routes.user_path(conn, :delete, user))
 +    ], fn conn ->
-+      assert redirected_to(conn) == session_path(conn, :new)
++      assert redirected_to(conn) == Routes.session_path(conn, :new)
 +      assert conn.halted
 +    end)
 +  end
@@ -39,15 +39,15 @@ index b9234b1..7bb7dac 100644
 --- a/web/controllers/user_controller.ex
 +++ b/web/controllers/user_controller.ex
 @@ -1,5 +1,6 @@
- defmodule TvRecipe.UserController do
-   use TvRecipe.Web, :controller
+ defmodule TvRecipeWeb.UserController do
+   use TvRecipeWeb, :controller
 +  plug :login_require when action in [:index, :show, :edit, :update, :delete]
 
    alias TvRecipe.User
 
-@@ -63,4 +64,20 @@ defmodule TvRecipe.UserController do
+@@ -63,4 +64,20 @@ defmodule TvRecipeWeb.UserController do
      |> put_flash(:info, "User deleted successfully.")
-     |> redirect(to: user_path(conn, :index))
+     |> redirect(to: Routes.user_path(conn, :index))
    end
 +
 +  @doc """
@@ -61,7 +61,7 @@ index b9234b1..7bb7dac 100644
 +    else
 +      conn
 +      |> put_flash(:info, "请先登录")
-+      |> redirect(to: session_path(conn, :new))
++      |> redirect(to: Routes.session_path(conn, :new))
 +      |> halt()
 +    end
 +  end
@@ -99,7 +99,7 @@ conn
 $ mix test
 .....................
 
-  1) test renders form for editing chosen resource (TvRecipe.UserControllerTest)
+  1) test renders form for editing chosen resource (TvRecipeWeb.UserControllerTest)
      test/controllers/user_controller_test.exs:44
      ** (RuntimeError) expected response with status 200, got: 302, with body:
      <html><body>You are being <a href="/sessions/new">redirected</a>.</body></html>
@@ -110,7 +110,7 @@ $ mix test
 
 
 
-  2) test lists all entries on index (TvRecipe.UserControllerTest)
+  2) test lists all entries on index (TvRecipeWeb.UserControllerTest)
      test/controllers/user_controller_test.exs:8
      ** (RuntimeError) expected response with status 200, got: 302, with body:
      <html><body>You are being <a href="/sessions/new">redirected</a>.</body></html>
@@ -121,7 +121,7 @@ $ mix test
 
 
 
-  3) test renders page not found when id is nonexistent (TvRecipe.UserControllerTest)
+  3) test renders page not found when id is nonexistent (TvRecipeWeb.UserControllerTest)
      test/controllers/user_controller_test.exs:38
      expected error to be sent as 404 status, but response sent 302 without error
      stacktrace:
@@ -130,10 +130,10 @@ $ mix test
 
 ..
 
-  4) test deletes chosen resource (TvRecipe.UserControllerTest)
+  4) test deletes chosen resource (TvRecipeWeb.UserControllerTest)
      test/controllers/user_controller_test.exs:63
      Assertion with == failed
-     code:  redirected_to(conn) == user_path(conn, :index)
+     code:  redirected_to(conn) == Routes.user_path(conn, :index)
      left:  "/sessions/new"
      right: "/users"
      stacktrace:
@@ -141,7 +141,7 @@ $ mix test
 
 
 
-  5) test shows chosen resource (TvRecipe.UserControllerTest)
+  5) test shows chosen resource (TvRecipeWeb.UserControllerTest)
      test/controllers/user_controller_test.exs:32
      ** (RuntimeError) expected response with status 200, got: 302, with body:
      <html><body>You are being <a href="/sessions/new">redirected</a>.</body></html>
@@ -152,10 +152,10 @@ $ mix test
 
 
 
-  6) test updates chosen resource and redirects when data is valid (TvRecipe.UserControllerTest)
+  6) test updates chosen resource and redirects when data is valid (TvRecipeWeb.UserControllerTest)
      test/controllers/user_controller_test.exs:50
      Assertion with == failed
-     code:  redirected_to(conn) == user_path(conn, :show, user)
+     code:  redirected_to(conn) == Routes.user_path(conn, :show, user)
      left:  "/sessions/new"
      right: "/users/1121"
      stacktrace:
@@ -163,7 +163,7 @@ $ mix test
 
 
 
-  7) test does not update chosen resource and renders errors when data is invalid (TvRecipe.UserControllerTest)
+  7) test does not update chosen resource and renders errors when data is invalid (TvRecipeWeb.UserControllerTest)
      test/controllers/user_controller_test.exs:57
      ** (RuntimeError) expected response with status 200, got: 302, with body:
      <html><body>You are being <a href="/sessions/new">redirected</a>.</body></html>
@@ -186,8 +186,8 @@ Finished in 0.4 seconds
 ```elixir
   test "shows chosen resource", %{conn: conn} do
     user = Repo.insert! User.changeset(%User{}, @valid_attrs)
-    conn = post conn, session_path(conn, :create), session: @valid_attrs # <= 这一行，登录用户
-    conn = get conn, user_path(conn, :show, user)
+    conn = post conn, Routes.session_path(conn, :create), session: @valid_attrs # <= 这一行，登录用户
+    conn = get conn, Routes.user_path(conn, :show, user)
     assert html_response(conn, 200) =~ "Show user"
   end
 ```
@@ -207,75 +207,38 @@ index ac6894e..e11df40 100644
 --- a/test/controllers/user_controller_test.exs
 +++ b/test/controllers/user_controller_test.exs
 @@ -1,10 +1,22 @@
- defmodule TvRecipe.UserControllerTest do
+ defmodule TvRecipeWeb.UserControllerTest do
    use TvRecipe.ConnCase
 
--  alias TvRecipe.User
-+  alias TvRecipe.{Repo, User}
+   alias TvRecipe.Repo
+   alias TvRecipe.Users
+   alias TvRecipe.Users.User
    @valid_attrs %{email: "chenxsan@gmail.com", password: "some content", username: "chenxsan"}
    @invalid_attrs %{}
 
-+  setup %{conn: conn} = context do
-+    if context[:logged_in] == true do
-+      # 如果上下文里 :logged_in 值为 true
-+      user = Repo.insert! User.changeset(%User{}, @valid_attrs)
-+      conn = post conn, session_path(conn, :create), session: @valid_attrs
-+      {:ok, [conn: conn, user: user]}
-+    else
-+      :ok
-+    end
+-  defp create_user(_) do
+-    user = fixture(:user)
+-    %{user: user}
+-  end
+
++  defp login_user(%{conn: conn}) do
++     user = fixture(:user)
++     conn = post conn, Routes.session_path(conn, :create), session: @valid_attrs
++     %{conn: conn, user: user}
 +  end
-+
-+  @tag logged_in: true
-   test "lists all entries on index", %{conn: conn} do
-     conn = get conn, user_path(conn, :index)
-     assert html_response(conn, 200) =~ "Listing users"
-@@ -29,24 +41,28 @@ defmodule TvRecipe.UserControllerTest do
-     assert html_response(conn, 200) =~ "New user"
-   end
 
-+  @tag logged_in: true
-   test "shows chosen resource", %{conn: conn} do
-     user = Repo.insert! %User{}
-     conn = get conn, user_path(conn, :show, user)
-     assert html_response(conn, 200) =~ "Show user"
-   end
+   describe "edit user" do
+-    setup [:create_user]
++    setup [:login_user]
 
-+  @tag logged_in: true
-   test "renders page not found when id is nonexistent", %{conn: conn} do
-     assert_error_sent 404, fn ->
-       get conn, user_path(conn, :show, -1)
-     end
+   test "renders form for editing chosen user", %{conn: conn, user: user} do
+      conn = get(conn, Routes.user_path(conn, :edit, user))
+      assert html_response(conn, 200) =~ "Edit User"
    end
+  end
 
-+  @tag logged_in: true
-   test "renders form for editing chosen resource", %{conn: conn} do
-     user = Repo.insert! %User{}
-     conn = get conn, user_path(conn, :edit, user)
-     assert html_response(conn, 200) =~ "Edit user"
-   end
-
-+  @tag logged_in: true
-   test "updates chosen resource and redirects when data is valid", %{conn: conn} do
-     user = Repo.insert! %User{}
-     conn = put conn, user_path(conn, :update, user), user: @valid_attrs
-@@ -54,12 +70,14 @@ defmodule TvRecipe.UserControllerTest do
-     assert Repo.get_by(User, @valid_attrs |> Map.delete(:password))
-   end
-
-+  @tag logged_in: true
-   test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
-     user = Repo.insert! %User{}
-     conn = put conn, user_path(conn, :update, user), user: @invalid_attrs
-     assert html_response(conn, 200) =~ "Edit user"
-   end
-
-+  @tag logged_in: true
-   test "deletes chosen resource", %{conn: conn} do
-     user = Repo.insert! %User{}
-     conn = delete conn, user_path(conn, :delete, user)
 ```
-我们根据 `logged_in` 的值返回不同 `conn`：一个是用户登录的 conn，一个是未登录的 conn。
+我们根据 `describe` 设置不同的 `setup`：需要用户登录则添加 `setup [:login_user]`, 不需要则不添加或留空 `setup []`
 
 现在运行测试：
 
@@ -283,7 +246,7 @@ index ac6894e..e11df40 100644
 $ mix test
 ...........................
 
-  1) test updates chosen resource and redirects when data is valid (TvRecipe.UserControllerTest)
+  1) test updates chosen resource and redirects when data is valid (TvRecipeWeb.UserControllerTest)
      test/controllers/user_controller_test.exs:66
      ** (RuntimeError) expected redirection with status 302, got: 200
      stacktrace:
@@ -306,13 +269,12 @@ diff --git a/test/controllers/user_controller_test.exs b/test/controllers/user_c
 index e11df40..c8263c6 100644
 --- a/test/controllers/user_controller_test.exs
 +++ b/test/controllers/user_controller_test.exs
-@@ -65,7 +65,7 @@ defmodule TvRecipe.UserControllerTest do
-   @tag logged_in: true
+@@ -65,7 +65,7 @@ defmodule TvRecipeWeb.UserControllerTest do
    test "updates chosen resource and redirects when data is valid", %{conn: conn} do
      user = Repo.insert! %User{}
--    conn = put conn, user_path(conn, :update, user), user: @valid_attrs
-+    conn = put conn, user_path(conn, :update, user), user: %{@valid_attrs | username: "samchen", email: "chenxsan+1@gmail.com"}
-     assert redirected_to(conn) == user_path(conn, :show, user)
+-    conn = put conn, Routes.user_path(conn, :update, user), user: @valid_attrs
++    conn = put conn, Routes.user_path(conn, :update, user), user: %{@valid_attrs | username: "samchen", email: "chenxsan+1@gmail.com"}
+     assert redirected_to(conn) == Routes.user_path(conn, :show, user)
      assert Repo.get_by(User, @valid_attrs |> Map.delete(:password))
    end
 ```
@@ -331,8 +293,8 @@ index 7bb7dac..c0056fd 100644
 --- a/web/controllers/user_controller.ex
 +++ b/web/controllers/user_controller.ex
 @@ -1,14 +1,9 @@
- defmodule TvRecipe.UserController do
-   use TvRecipe.Web, :controller
+ defmodule TvRecipeWeb.UserController do
+   use TvRecipeWeb, :controller
 -  plug :login_require when action in [:index, :show, :edit, :update, :delete]
 +  plug :login_require when action in [:show, :edit, :update]
 
@@ -346,7 +308,7 @@ index 7bb7dac..c0056fd 100644
    def new(conn, _params) do
      changeset = User.changeset(%User{})
      render(conn, "new.html", changeset: changeset)
-@@ -53,18 +48,6 @@ defmodule TvRecipe.UserController do
+@@ -53,18 +48,6 @@ defmodule TvRecipeWeb.UserController do
      end
    end
 
@@ -359,7 +321,7 @@ index 7bb7dac..c0056fd 100644
 -
 -    conn
 -    |> put_flash(:info, "User deleted successfully.")
--    |> redirect(to: user_path(conn, :index))
+-    |> redirect(to: Routes.user_path(conn, :index))
 -  end
 -
    @doc """
@@ -372,52 +334,49 @@ diff --git a/test/controllers/user_controller_test.exs b/test/controllers/user_c
 index c8263c6..a2ccee0 100644
 --- a/test/controllers/user_controller_test.exs
 +++ b/test/controllers/user_controller_test.exs
-@@ -16,12 +16,6 @@ defmodule TvRecipe.UserControllerTest do
+@@ -16,12 +16,6 @@ defmodule TvRecipeWeb.UserControllerTest do
      end
    end
 
--  @tag logged_in: true
 -  test "lists all entries on index", %{conn: conn} do
--    conn = get conn, user_path(conn, :index)
+-    conn = get conn, Routes.user_path(conn, :index)
 -    assert html_response(conn, 200) =~ "Listing users"
 -  end
      end
    end
 
--  @tag logged_in: true
 -  test "lists all entries on index", %{conn: conn} do
--    conn = get conn, user_path(conn, :index)
+-    conn = get conn, Routes.user_path(conn, :index)
 -    assert html_response(conn, 200) =~ "Listing users"
 -  end
 -
    test "renders form for new resources", %{conn: conn} do
-     conn = get conn, user_path(conn, :new)
+     conn = get conn, Routes.user_path(conn, :new)
      assert html_response(conn, 200) =~ "New user"
-@@ -77,22 +71,12 @@ defmodule TvRecipe.UserControllerTest do
+@@ -77,22 +71,12 @@ defmodule TvRecipeWeb.UserControllerTest do
      assert html_response(conn, 200) =~ "Edit user"
    end
 
--  @tag logged_in: true
 -  test "deletes chosen resource", %{conn: conn} do
 -    user = Repo.insert! %User{}
--    conn = delete conn, user_path(conn, :delete, user)
--    assert redirected_to(conn) == user_path(conn, :index)
+-    conn = delete conn, Routes.user_path(conn, :delete, user)
+-    assert redirected_to(conn) == Routes.user_path(conn, :index)
 -    refute Repo.get(User, user.id)
 -  end
 -
    test "guest access user action redirected to login page", %{conn: conn} do
      user = Repo.insert! %User{}
      Enum.each([
--      get(conn, user_path(conn, :index)),
-       get(conn, user_path(conn, :show, user)),
-       get(conn, user_path(conn, :edit, user)),
-       put(conn, user_path(conn, :update, user), user: %{}),
--      delete(conn, user_path(conn, :delete, user))
+-      get(conn, Routes.user_path(conn, :index)),
+       get(conn, Routes.user_path(conn, :show, user)),
+       get(conn, Routes.user_path(conn, :edit, user)),
+       put(conn, Routes.user_path(conn, :update, user), user: %{}),
+-      delete(conn, Routes.user_path(conn, :delete, user))
      ], fn conn ->
-       assert redirected_to(conn) == session_path(conn, :new)
+       assert redirected_to(conn) == Routes.session_path(conn, :new)
        assert conn.halted
      ], fn conn ->
-       assert redirected_to(conn) == session_path(conn, :new)
+       assert redirected_to(conn) == Routes.session_path(conn, :new)
        assert conn.halted
 diff --git a/web/templates/user/edit.html.eex b/web/templates/user/edit.html.eex
 index 7e08f2b..beae173 100644
@@ -472,7 +431,7 @@ diff --git a/test/controllers/user_controller_test.exs b/test/controllers/user_c
 index a2ccee0..fd57531 100644
 --- a/test/controllers/user_controller_test.exs
 +++ b/test/controllers/user_controller_test.exs
-@@ -82,4 +82,19 @@ defmodule TvRecipe.UserControllerTest do
+@@ -82,4 +82,19 @@ defmodule TvRecipeWeb.UserControllerTest do
        assert conn.halted
      end)
    end
@@ -481,12 +440,12 @@ index a2ccee0..fd57531 100644
 +  test "does not allow access to other user path", %{conn: conn, user: user} do
 +    another_user = Repo.insert! %User{}
 +    Enum.each([
-+      get(conn, user_path(conn, :show, another_user)),
-+      get(conn, user_path(conn, :edit, another_user)),
-+      put(conn, user_path(conn, :update, another_user), user: %{})
++      get(conn, Routes.user_path(conn, :show, another_user)),
++      get(conn, Routes.user_path(conn, :edit, another_user)),
++      put(conn, Routes.user_path(conn, :update, another_user), user: %{})
 +    ], fn conn ->
 +      assert get_flash(conn, :error) == "禁止访问未授权页面"
-+      assert redirected_to(conn) == user_path(conn, :show, user)
++      assert redirected_to(conn) == Routes.user_path(conn, :show, user)
 +      assert conn.halted
 +    end)
 +  end
@@ -501,14 +460,14 @@ index c0056fd..520d986 100644
 --- a/web/controllers/user_controller.ex
 +++ b/web/controllers/user_controller.ex
 @@ -1,6 +1,7 @@
- defmodule TvRecipe.UserController do
-   use TvRecipe.Web, :controller
+ defmodule TvRecipeWeb.UserController do
+   use TvRecipeWeb, :controller
    plug :login_require when action in [:show, :edit, :update]
 +  plug :self_require when action in [:show, :edit, :update]
 
    alias TvRecipe.User
 
-@@ -63,4 +64,21 @@ defmodule TvRecipe.UserController do
+@@ -63,4 +64,21 @@ defmodule TvRecipeWeb.UserController do
        |> halt()
      end
    end
@@ -525,7 +484,7 @@ index c0056fd..520d986 100644
 +    else
 +      conn
 +      |> put_flash(:error, "禁止访问未授权页面")
-+      |> redirect(to: user_path(conn, :show, conn.assigns.current_user))
++      |> redirect(to: Routes.user_path(conn, :show, conn.assigns.current_user))
 +      |> halt()
 +    end
 +  end
@@ -539,7 +498,7 @@ index c0056fd..520d986 100644
 $ mix test
 ....................
 
-  1) test shows chosen resource (TvRecipe.UserControllerTest)
+  1) test shows chosen resource (TvRecipeWeb.UserControllerTest)
      test/controllers/user_controller_test.exs:39
      ** (RuntimeError) expected response with status 200, got: 302, with body:
      <html><body>You are being <a href="/users/2941">redirected</a>.</body></html>
@@ -550,7 +509,7 @@ $ mix test
 
 
 
-  2) test renders form for editing chosen resource (TvRecipe.UserControllerTest)
+  2) test renders form for editing chosen resource (TvRecipeWeb.UserControllerTest)
      test/controllers/user_controller_test.exs:53
      ** (RuntimeError) expected response with status 200, got: 302, with body:
      <html><body>You are being <a href="/users/2943">redirected</a>.</body></html>
@@ -561,10 +520,10 @@ $ mix test
 
 ....
 
-  3) test updates chosen resource and redirects when data is valid (TvRecipe.UserControllerTest)
+  3) test updates chosen resource and redirects when data is valid (TvRecipeWeb.UserControllerTest)
      test/controllers/user_controller_test.exs:60
      Assertion with == failed
-     code:  redirected_to(conn) == user_path(conn, :show, user)
+     code:  redirected_to(conn) == Routes.user_path(conn, :show, user)
      left:  "/users/2948"
      right: "/users/2949"
      stacktrace:
@@ -572,7 +531,7 @@ $ mix test
 
 
 
-  4) test renders page not found when id is nonexistent (TvRecipe.UserControllerTest)
+  4) test renders page not found when id is nonexistent (TvRecipeWeb.UserControllerTest)
      test/controllers/user_controller_test.exs:46
      expected error to be sent as 404 status, but response sent 302 without error
      stacktrace:
@@ -581,7 +540,7 @@ $ mix test
 
 .
 
-  5) test does not update chosen resource and renders errors when data is invalid (TvRecipe.UserControllerTest)
+  5) test does not update chosen resource and renders errors when data is invalid (TvRecipeWeb.UserControllerTest)
      test/controllers/user_controller_test.exs:68
      ** (RuntimeError) expected response with status 200, got: 302, with body:
      <html><body>You are being <a href="/users/2952">redirected</a>.</body></html>
@@ -602,7 +561,7 @@ diff --git a/test/controllers/user_controller_test.exs b/test/controllers/user_c
 index fd57531..a1b75c6 100644
 --- a/test/controllers/user_controller_test.exs
 +++ b/test/controllers/user_controller_test.exs
-@@ -3,6 +3,7 @@ defmodule TvRecipe.UserControllerTest do
+@@ -3,6 +3,7 @@ defmodule TvRecipeWeb.UserControllerTest do
 
    alias TvRecipe.{Repo, User}
    @valid_attrs %{email: "chenxsan@gmail.com", password: "some content", username: "chenxsan"}
@@ -610,52 +569,46 @@ index fd57531..a1b75c6 100644
    @invalid_attrs %{}
 
    setup %{conn: conn} = context do
-@@ -36,37 +37,26 @@ defmodule TvRecipe.UserControllerTest do
+@@ -36,37 +37,26 @@ defmodule TvRecipeWeb.UserControllerTest do
    end
 
-   @tag logged_in: true
 -  test "shows chosen resource", %{conn: conn} do
 -    user = Repo.insert! %User{}
 +  test "shows chosen resource", %{conn: conn, user: user} do
-     conn = get conn, user_path(conn, :show, user)
+     conn = get conn, Routes.user_path(conn, :show, user)
      assert html_response(conn, 200) =~ "Show user"
    end
 
-   @tag logged_in: true
 -  test "renders page not found when id is nonexistent", %{conn: conn} do
 -    assert_error_sent 404, fn ->
--      get conn, user_path(conn, :show, -1)
-   @tag logged_in: true
+-      get conn, Routes.user_path(conn, :show, -1)
 -  test "renders page not found when id is nonexistent", %{conn: conn} do
 -    assert_error_sent 404, fn ->
--      get conn, user_path(conn, :show, -1)
+-      get conn, Routes.user_path(conn, :show, -1)
 -    end
 -  end
 -
--  @tag logged_in: true
 -  test "renders form for editing chosen resource", %{conn: conn} do
 -    user = Repo.insert! %User{}
 +  test "renders form for editing chosen resource", %{conn: conn, user: user} do
-     conn = get conn, user_path(conn, :edit, user)
+     conn = get conn, Routes.user_path(conn, :edit, user)
      assert html_response(conn, 200) =~ "Edit user"
    end
 
-   @tag logged_in: true
 -  test "updates chosen resource and redirects when data is valid", %{conn: conn} do
 -    user = Repo.insert! %User{}
--    conn = put conn, user_path(conn, :update, user), user: %{@valid_attrs | username: "samchen", email: "chenxsan+1@gmail.com"}
+-    conn = put conn, Routes.user_path(conn, :update, user), user: %{@valid_attrs | username: "samchen", email: "chenxsan+1@gmail.com"}
 +  test "updates chosen resource and redirects when data is valid", %{conn: conn, user: user} do
-+    conn = put conn, user_path(conn, :update, user), user: @another_valid_attrs
-     assert redirected_to(conn) == user_path(conn, :show, user)
++    conn = put conn, Routes.user_path(conn, :update, user), user: @another_valid_attrs
+     assert redirected_to(conn) == Routes.user_path(conn, :show, user)
 -    assert Repo.get_by(User, @valid_attrs |> Map.delete(:password))
 +    assert Repo.get_by(User, @another_valid_attrs |> Map.delete(:password))
    end
 
-   @tag logged_in: true
 -  test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
 -    user = Repo.insert! %User{}
 +  test "does not update chosen resource and renders errors when data is invalid", %{conn: conn, user: user} do
-     conn = put conn, user_path(conn, :update, user), user: @invalid_attrs
+     conn = put conn, Routes.user_path(conn, :update, user), user: @invalid_attrs
      assert html_response(conn, 200) =~ "Edit user"
    end
 ```
