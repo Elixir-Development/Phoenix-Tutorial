@@ -2,28 +2,20 @@
 
 ![](img/phoenix.png)
 
-
 ## 目录
 
-------
-
-### 第一部分：
-
-------
-
+* ### 第一部分：
   * [准备工作](00-prepare/00-prepare.md)
   * [创建项目](01-create-project/01-create-project.md)
   * [Phoenix 初体验](02-explore-phoenix/02-explore-phoenix.md)
 
-### 第二部分：
-
-------
+* ### 第二部分：
 
   * [Menu 项目规划](03-project-menu/03-project-menu.md)
 
   * [用户注册功能](04-user-register/00-prepare.md)
-  * [`username` 必填](04-user-register/01-username-required.md)
-  * [验证 `username` 的唯一性](04-user-register/02-username-unique.md)
+  * [username 必填](04-user-register/01-username-required.md)
+  * [验证 username 的唯一性](04-user-register/02-username-unique.md)
   * [检查用户名的许可字符](04-user-register/03-username-format.md)
   * [限制 `username` 的长度](04-user-register/04-username-length.md)
   * [禁止用户注册 `admin`](04-user-register/05-username-exclude.md)
@@ -47,10 +39,7 @@
 
 **如有错误，欢迎指正**
 
--------
 #### 鸣谢：
-
   * [Sam Chen](https://github.com/chenxsan)
   * [Mark Hoo](https://github.com/MarkHoo)
-  * [shynome](https://github.com/shynome)
-  
+
